@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Danny Ford | Applied AI Systems Engineer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0d0d0d;
+    color: #f5f5f5;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .card {
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+  }
+  .name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+  .title {
+    font-size: 13px;
+    font-weight: 500;
+    color: #e87a3a;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .divider {
+    width: 48px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e87a3a, transparent);
+    margin: 0 auto 32px;
+  }
+  .desc {
+    font-size: 15px;
+    color: #999;
+    line-height: 1.6;
+    margin-bottom: 36px;
+  }
+  .links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .link-btn {
+    display: block;
+    padding: 14px 24px;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    color: #f5f5f5;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .link-btn:hover {
+    border-color: #e87a3a;
+    background: #1f1a17;
+  }
+  .link-btn .label {
+    color: #777;
+    font-size: 11px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .save-btn {
+    display: inline-block;
+    margin-top: 28px;
+    padding: 12px 32px;
+    background: #e87a3a;
+    color: #0d0d0d;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .save-btn:hover {
+    background: #ff8c4a;
+  }
+  .footer {
+    margin-top: 40px;
+    font-size: 11px;
+    color: #444;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="name">Danny Ford</div>
+  <div class="title">Applied AI Systems Engineer</div>
+  <div class="divider"></div>
+  <div class="desc">
+    I build custom AI systems for small businesses &mdash;
+    phone answering, scheduling, lead management, and workflow
+    automation. Built from scratch for how you actually work.
+  </div>
+  <div class="links">
+    <a href="tel:+1XXXXXXXXXX" class="link-btn">
+      <span class="label">Call</span>
+      (XXX) XXX-XXXX
+    </a>
+    <a href="mailto:PLACEHOLDER@email.com" class="link-btn">
+      <span class="label">Email</span>
+      PLACEHOLDER@email.com
+    </a>
+  </div>
+  <a href="#" class="save-btn" id="saveContact">Save Contact</a>
+  <div class="footer">Longmont, CO</div>
+</div>
+<script>
+  // vCard download
+  document.getElementById('saveContact').addEventListener('click', function(e) {
+    e.preventDefault();
+    var vcard = [
+      'BEGIN:VCARD',
+      'VERSION:3.0',
+      'FN:Danny Ford',
+      'TITLE:Applied AI Systems Engineer',
+      'TEL;TYPE=WORK:+1XXXXXXXXXX',
+      'EMAIL:PLACEHOLDER@email.com',
+      'ADR;TYPE=WORK:;;Longmont;CO;;;US',
+      'URL:https://fox-detailing.com',
+      'END:VCARD'
+    ].join('\n');
+    var blob = new Blob([vcard], {type: 'text/vcard'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'Danny_Ford.vcf';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+</script>
+</body>
+</html>
