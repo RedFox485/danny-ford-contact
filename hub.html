@@ -9,14 +9,14 @@
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
   :root {
-    --bg-deep: #0d0d0d;
-    --bg-surface: #1a1a1a;
-    --bg-elevated: #222;
-    --border: #2a2a2a;
-    --border-focus: #3a3a3a;
-    --text-primary: #f0ede8;
-    --text-secondary: #b8b5b0;
-    --text-muted: #777;
+    --bg-deep: #080808;
+    --bg-surface: #131313;
+    --bg-elevated: #1a1a1a;
+    --border: #222;
+    --border-focus: #333;
+    --text-primary: #f5f3f0;
+    --text-secondary: #c5c2bc;
+    --text-muted: #888;
     --text-dim: #555;
     --accent: #e87a3a;
     --accent-hover: #ff8c4a;
@@ -76,9 +76,9 @@
     gap: 12px; max-width: 260px; width: 100%;
   }
   .pin-key {
-    height: 56px; border-radius: 8px;
+    height: 52px; border-radius: 12px;
     background: var(--bg-surface); border: 1px solid var(--border);
-    color: var(--text-primary); font-size: 22px; font-weight: 600;
+    color: var(--text-primary); font-size: 20px; font-weight: 500;
     font-family: 'Inter', sans-serif;
     cursor: pointer; transition: all 0.1s;
     display: flex; align-items: center; justify-content: center;
@@ -93,39 +93,41 @@
   /* ===== TAB BAR ===== */
   .tabs {
     position: fixed; bottom: 0; left: 0; right: 0;
-    display: flex; background: #111; border-top: 1px solid var(--border);
+    display: flex; background: rgba(13,13,13,0.92); backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255,255,255,0.06);
     z-index: 100; padding-bottom: env(safe-area-inset-bottom, 0);
   }
   .tab {
-    flex: 1; padding: 10px 0 8px; text-align: center;
-    font-size: 10px; font-weight: 600; color: var(--text-dim);
-    letter-spacing: 0.8px; text-transform: uppercase;
+    flex: 1; padding: 8px 0 6px; text-align: center;
+    font-size: 9px; font-weight: 500; color: var(--text-dim);
+    letter-spacing: 1px; text-transform: uppercase;
     cursor: pointer; transition: color 0.2s;
   }
   .tab.active { color: var(--accent); }
-  .tab-icon { font-size: 18px; display: block; margin-bottom: 2px; }
+  .tab-icon { font-size: 15px; display: block; margin-bottom: 1px; }
 
   /* ===== PAGES ===== */
-  .page { display: none; padding: 20px 16px; }
+  .page { display: none; padding: 16px 16px 24px; }
   .page.active { display: block; }
 
   .page-header {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 22px; font-weight: 800; letter-spacing: -0.3px;
-    margin-bottom: 4px;
+    font-size: 18px; font-weight: 800; letter-spacing: -0.3px;
+    margin-bottom: 2px;
   }
   .page-sub {
-    font-size: 12px; color: var(--text-dim); margin-bottom: 20px;
+    font-size: 11px; color: var(--text-dim); margin-bottom: 14px;
     letter-spacing: 0.3px;
   }
 
   /* ===== LOGGER ===== */
   .capture-btn {
-    width: 100%; padding: 18px; background: var(--accent); color: var(--bg-deep);
-    border: none; border-radius: 10px; font-size: 16px; font-weight: 700;
+    width: 100%; padding: 14px; background: var(--accent); color: var(--bg-deep);
+    border: none; border-radius: 8px; font-size: 14px; font-weight: 700;
     font-family: 'Inter', sans-serif;
-    cursor: pointer; margin-bottom: 16px; transition: all 0.15s;
-    min-height: 56px;
+    cursor: pointer; margin-bottom: 14px; transition: all 0.15s;
+    min-height: 48px;
     position: relative; overflow: hidden;
   }
   .capture-btn::before {
@@ -160,12 +162,12 @@
   .voice-area:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-muted); }
 
   .save-visit-btn {
-    width: 100%; padding: 16px; background: var(--bg-surface);
+    width: 100%; padding: 12px; background: var(--bg-surface);
     color: var(--accent); border: 1px solid var(--accent);
-    border-radius: 10px; font-size: 15px; font-weight: 600;
+    border-radius: 8px; font-size: 14px; font-weight: 600;
     font-family: 'Inter', sans-serif;
-    cursor: pointer; margin-top: 14px; transition: all 0.15s;
-    min-height: 52px;
+    cursor: pointer; margin-top: 12px; transition: all 0.15s;
+    min-height: 44px;
   }
   .save-visit-btn:active { background: var(--accent); color: var(--bg-deep); }
 
@@ -175,7 +177,7 @@
   /* ===== HISTORY ===== */
   .visit-card {
     background: var(--bg-surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 14px 16px; margin-bottom: 10px;
+    border-radius: 8px; padding: 12px 14px; margin-bottom: 8px;
   }
   .visit-card .v-addr {
     font-size: 13px; color: var(--accent); font-weight: 600; margin-bottom: 3px;
@@ -202,21 +204,21 @@
   .history-stats { display: flex; gap: 10px; margin-bottom: 16px; }
   .stat-box {
     flex: 1; background: var(--bg-surface); border: 1px solid var(--border);
-    border-radius: 8px; padding: 14px; text-align: center;
+    border-radius: 8px; padding: 10px; text-align: center;
   }
-  .stat-num { font-size: 28px; font-weight: 800; color: var(--accent); font-family: 'Plus Jakarta Sans', sans-serif; }
-  .stat-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 4px; }
+  .stat-num { font-size: 24px; font-weight: 800; color: var(--accent); font-family: 'Plus Jakarta Sans', sans-serif; }
+  .stat-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 2px; }
 
   /* ===== PLAYBOOK ===== */
   .section-card {
     background: var(--bg-surface); border: 1px solid var(--border);
-    border-radius: 10px; margin-bottom: 10px; overflow: hidden;
+    border-radius: 8px; margin-bottom: 8px; overflow: hidden;
   }
   .section-header {
-    padding: 16px; cursor: pointer; display: flex;
+    padding: 12px 14px; cursor: pointer; display: flex;
     justify-content: space-between; align-items: center;
-    font-size: 15px; font-weight: 700; letter-spacing: -0.2px;
-    min-height: 52px;
+    font-size: 14px; font-weight: 600; letter-spacing: -0.1px;
+    min-height: 44px;
   }
   .section-header .arrow {
     color: var(--text-dim); transition: transform 0.2s ease;
@@ -224,8 +226,8 @@
   }
   .section-header.open .arrow { transform: rotate(90deg); color: var(--accent); }
   .section-body {
-    display: none; padding: 0 16px 16px;
-    font-size: 14px; color: var(--text-secondary); line-height: 1.7;
+    display: none; padding: 0 14px 14px;
+    font-size: 13px; color: var(--text-secondary); line-height: 1.6;
   }
   .section-body.open { display: block; }
 
@@ -275,12 +277,84 @@
     cursor: pointer; margin-top: 12px; font-family: 'Inter', sans-serif;
     min-height: 48px;
   }
+
+  /* ===== TOP ACCENT BAR (matches business card) ===== */
+  body::before {
+    content: ''; position: fixed; top: 0; left: 0; right: 0;
+    height: 3px; z-index: 150;
+    background: linear-gradient(90deg, #d4682a, #e87a3a, #d4682a);
+  }
+
+  /* ===== LOCK SCREEN POLISH ===== */
+  .lock-screen::before {
+    content: ''; position: absolute;
+    top: -80px; right: -60px;
+    width: 400px; height: 500px;
+    background: linear-gradient(135deg, transparent 0%, var(--accent-glow) 30%, rgba(232, 122, 58, 0.1) 50%, var(--accent-glow) 70%, transparent 100%);
+    transform: rotate(12deg); z-index: 0;
+  }
+  .lock-screen > * { position: relative; z-index: 1; }
+  .lock-brand {
+    font-size: 11px; color: var(--text-dim); letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 24px; font-weight: 500;
+  }
+
+  /* ===== PORTFOLIO ===== */
+  .folio-card {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px; margin-bottom: 12px;
+    position: relative; overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .folio-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 2px; background: var(--accent); opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .folio-card:active::before { opacity: 1; }
+  .folio-card:active { border-color: var(--border-focus); }
+
+  .folio-type {
+    font-size: 10px; font-weight: 600; color: var(--accent);
+    letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px;
+  }
+  .folio-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 17px; font-weight: 800; letter-spacing: -0.2px;
+    margin-bottom: 6px;
+  }
+  .folio-desc {
+    font-size: 13px; color: var(--text-muted); line-height: 1.5;
+    margin-bottom: 10px;
+  }
+  .folio-tags {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .folio-tag {
+    font-size: 10px; font-weight: 600; color: var(--text-secondary);
+    background: var(--bg-deep); border: 1px solid var(--border);
+    padding: 3px 8px; border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+  .folio-link {
+    display: inline-block; margin-top: 10px;
+    font-size: 12px; font-weight: 600; color: var(--accent);
+    letter-spacing: 0.3px; text-decoration: none;
+    padding: 6px 0;
+  }
+
+  /* ===== PAGE HEADER ACCENT ===== */
+  .page-accent {
+    width: 32px; height: 2px; margin-bottom: 16px;
+    background: linear-gradient(90deg, var(--accent), rgba(232, 122, 58, 0.1));
+  }
 </style>
 </head>
 <body>
 
 <!-- PIN LOCK SCREEN -->
 <div class="lock-screen" id="lockScreen">
+  <div class="lock-brand">Danny Ford Systems</div>
   <div class="lock-title" id="lockTitle">Enter PIN</div>
   <div class="lock-sub" id="lockSub">4-digit access code</div>
   <div class="pin-dots">
@@ -310,6 +384,7 @@
 <div class="page active" id="page-logger">
   <div class="page-header">Log Visit</div>
   <div class="page-sub">Tap, voice-type, save. 15 seconds.</div>
+  <div class="page-accent"></div>
 
   <button class="capture-btn" id="captureBtn">Capture Location</button>
 
@@ -330,6 +405,7 @@
 <div class="page" id="page-playbook">
   <div class="page-header">Playbook</div>
   <div class="page-sub">Quick reference. Read before you walk in.</div>
+  <div class="page-accent"></div>
 
   <div class="section-card">
     <div class="section-header" onclick="toggleSection(this)">
@@ -465,6 +541,7 @@
 <div class="page" id="page-history">
   <div class="page-header">Visit Log</div>
   <div class="page-sub">All visits, newest first.</div>
+  <div class="page-accent"></div>
 
   <div class="history-stats" id="historyStats" style="display:none;">
     <div class="stat-box">
@@ -482,6 +559,79 @@
   <button class="export-btn" id="exportBtn" style="display:none;">Copy All Notes to Clipboard</button>
 </div>
 
+<!-- PORTFOLIO PAGE -->
+<div class="page" id="page-portfolio">
+  <div class="page-header">Portfolio</div>
+  <div class="page-sub">Show clients what you've built.</div>
+  <div class="page-accent"></div>
+
+  <div class="folio-card">
+    <div class="folio-type">AI / Automation</div>
+    <div class="folio-title">AI Lead Pipeline</div>
+    <div class="folio-desc">Automated lead capture, scoring, and routing system. Pulls prospects from multiple sources, qualifies them with AI, and routes hot leads for immediate follow-up.</div>
+    <div class="folio-tags">
+      <span class="folio-tag">AI</span>
+      <span class="folio-tag">Automation</span>
+      <span class="folio-tag">Lead Gen</span>
+    </div>
+  </div>
+
+  <div class="folio-card">
+    <div class="folio-type">Voice / POS</div>
+    <div class="folio-title">EasyPOS Voice System</div>
+    <div class="folio-desc">Voice-activated point-of-sale for coffee shops. Staff speaks orders naturally, AI parses items, modifiers, and quantities in real time. 94% accuracy.</div>
+    <div class="folio-tags">
+      <span class="folio-tag">Voice AI</span>
+      <span class="folio-tag">Real-time</span>
+      <span class="folio-tag">POS</span>
+    </div>
+  </div>
+
+  <div class="folio-card">
+    <div class="folio-type">IoT / Hardware</div>
+    <div class="folio-title">Vehicle IoT Platform</div>
+    <div class="folio-desc">Full-stack IoT system for vehicle fleet monitoring. Sensor integration, real-time dashboards, alerts, and predictive maintenance. Hardware + software.</div>
+    <div class="folio-tags">
+      <span class="folio-tag">IoT</span>
+      <span class="folio-tag">Hardware</span>
+      <span class="folio-tag">Dashboards</span>
+    </div>
+  </div>
+
+  <div class="folio-card">
+    <div class="folio-type">Education / Infrastructure</div>
+    <div class="folio-title">3D Printing Lab</div>
+    <div class="folio-desc">Designed and built a district-wide 3D printing program for SVVSD (60 schools, 30K students). Networked 16 printers, built curriculum, trained staff.</div>
+    <div class="folio-tags">
+      <span class="folio-tag">Education</span>
+      <span class="folio-tag">Hardware</span>
+      <span class="folio-tag">Infrastructure</span>
+    </div>
+  </div>
+
+  <div class="folio-card">
+    <div class="folio-type">Hardware / Engineering</div>
+    <div class="folio-title">CNC Router Build</div>
+    <div class="folio-desc">Custom CNC router designed and fabricated from scratch. Full mechanical design, electronics integration, and control software setup.</div>
+    <div class="folio-tags">
+      <span class="folio-tag">CNC</span>
+      <span class="folio-tag">Fabrication</span>
+      <span class="folio-tag">Design</span>
+    </div>
+  </div>
+
+  <div class="folio-card">
+    <div class="folio-type">Marine / Engineering</div>
+    <div class="folio-title">Research Vessel Systems</div>
+    <div class="folio-desc">Electrical and systems engineering for a marine research vessel. Navigation, power distribution, sensor arrays, and data acquisition.</div>
+    <div class="folio-tags">
+      <span class="folio-tag">Marine</span>
+      <span class="folio-tag">Electrical</span>
+      <span class="folio-tag">Systems</span>
+    </div>
+  </div>
+</div>
+
 <!-- TAB BAR -->
 <div class="tabs" id="tabBar" style="display:none;">
   <div class="tab active" onclick="switchTab('logger')">
@@ -489,6 +639,9 @@
   </div>
   <div class="tab" onclick="switchTab('playbook')">
     <span class="tab-icon">&#9776;</span>Playbook
+  </div>
+  <div class="tab" onclick="switchTab('portfolio')">
+    <span class="tab-icon">&#9830;</span>Work
   </div>
   <div class="tab" onclick="switchTab('history')">
     <span class="tab-icon">&#9737;</span>History
