@@ -1,0 +1,36 @@
+{
+  "id": "marvin-gardens",
+  "name": "Marvin Gardens Real Estate & Property Mgmt",
+  "type": "Property Management",
+  "address": "762 Mountain View Ave, Longmont, CO 80501",
+  "phone": "(720) 466-3437",
+  "website": "marvin-gardens.com",
+  "owner": "Dave Marvin",
+  "coords": { "lat": 40.1678, "lng": -105.1047 },
+  "hours": "Mon-Thu 9:30-5:30, Fri CLOSED, Sat 10-2, Sun CLOSED",
+  "rating": "4.9 stars (Birdeye)",
+  "reviewCount": "82",
+  "priority": 2,
+  "status": "pending",
+  "added": "2026-03-03",
+  "painPoints": [
+    "7 people managing 130 properties — lean operation, likely strained",
+    "Single maintenance coordinator (Jimmy Walker) = bottleneck",
+    "Closed Fridays entirely — unusual gap for property management",
+    "No visible online scheduling — contact form only for bookings",
+    "Tenant/vendor coordination likely manual and time-consuming"
+  ],
+  "strengths": [
+    "Founded Up the Ladder Scholarship — down payment assistance for families",
+    "Supports affordable housing vouchers (10% of portfolio)",
+    "Partners with HOPE, OUR Center, The Inn Between",
+    "Dave is from Buffalo NY, University of Rochester grad (Music + History)",
+    "Lives on a small farm with wife, 3 dogs, chickens, 2 mules, and a three-legged cat"
+  ],
+  "conversationStarters": [
+    "Heard about the Up the Ladder Scholarship — that's a really cool community program",
+    "Managing 130 properties with a small team is impressive"
+  ],
+  "suggestedApproach": "Highest dollar opportunity. Maintenance request automation, after-hours tenant call handling, vendor coordination workflow. Dave is community-minded — lead with genuine interest in his work, not a hard pitch. Ask about the biggest time sink in managing 130 properties.",
+  "estimatedOpportunity": "$200-500 custom project + possible monthly retainer"
+}

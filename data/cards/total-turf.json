@@ -1,0 +1,33 @@
+{
+  "id": "total-turf",
+  "name": "Total Turf Lawn Care",
+  "type": "Landscaping",
+  "address": "1830 Delaware Pl, Longmont, CO 80501",
+  "phone": "(720) 343-9845",
+  "website": "totalturflawncare.com",
+  "owner": "Jarrod Bechtold",
+  "coords": { "lat": 40.1672, "lng": -105.1019 },
+  "hours": "Mon-Fri 8am-5pm, Closed weekends",
+  "rating": "A+ BBB, Nextdoor Favorite 2022-2023",
+  "reviewCount": "114+",
+  "priority": 1,
+  "status": "pending",
+  "added": "2026-03-03",
+  "painPoints": [
+    "Reviews mention slow response times and hard to reach by phone",
+    "Unresponsive except via email — phone calls may go unanswered",
+    "Closed weekends = missed leads from homeowners browsing Saturday"
+  ],
+  "strengths": [
+    "Nextdoor Neighborhood Favorite 2022 and 2023",
+    "Full-service: lawn care, landscaping, irrigation, tree care",
+    "Serves HOAs, residential, and commercial",
+    "15+ years experience, well-known in Longmont"
+  ],
+  "conversationStarters": [
+    "Noticed you won Nextdoor Neighborhood Favorite two years running",
+    "Customers clearly love the quality of your work"
+  ],
+  "suggestedApproach": "Lead with their communication gap. Reviews praise quality but mention difficulty reaching them. Voice bot handles overflow calls and after-hours inquiries. 'I noticed customers love your work but say it's hard to get through — what if you never missed a call?'",
+  "estimatedOpportunity": "$100-200 setup, $100-150/mo"
+}

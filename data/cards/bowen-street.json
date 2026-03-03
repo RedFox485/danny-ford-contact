@@ -1,0 +1,35 @@
+{
+  "id": "bowen-street",
+  "name": "Bowen Street Garage",
+  "type": "Auto Repair",
+  "address": "51 Bowen St, Longmont, CO 80501",
+  "phone": "(303) 651-2220",
+  "website": "bowenstreetgarage.com",
+  "owner": "Andreas Miller",
+  "coords": { "lat": 40.1659, "lng": -105.1015 },
+  "hours": "Mon-Fri 8am-5pm, Closed weekends",
+  "rating": "4.6-4.7 stars",
+  "reviewCount": "133 (Birdeye)",
+  "priority": 3,
+  "status": "pending",
+  "added": "2026-03-03",
+  "painPoints": [
+    "Closed weekends — customers with 9-5 jobs can't easily schedule",
+    "Basic appointment form on website but no real-time scheduling",
+    "No automated service reminders for returning customers",
+    "Small team (6-8) — phone time competes with wrench time"
+  ],
+  "strengths": [
+    "Andreas Miller: 2011 Gates/ASE Master Auto & L1 Technician of the Year",
+    "Specializes in Sprinter vans, Cummins, European diesel, 4x4",
+    "A+ BBB rating, no complaints on record",
+    "Free loaner vehicles — strong customer service focus",
+    "NAPA Auto Care partner, MWACA member"
+  ],
+  "conversationStarters": [
+    "Congrats on the ASE Master Technician award — that's a serious credential",
+    "Sprinter van and European diesel specialty is a niche most shops won't touch"
+  ],
+  "suggestedApproach": "Andreas is detail-oriented and values quality over gimmicks. Lead with the ASE award, show genuine respect for his expertise. Then: 'What happens when someone calls on Saturday and you're closed?' Voice bot for after-hours + automated service reminders for repeat customers.",
+  "estimatedOpportunity": "$100-200 setup, $100-150/mo"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "longmont-small-animal",
+  "name": "Longmont Small Animal Hospital",
+  "type": "Veterinary Clinic",
+  "address": "104 S Main St, Longmont, CO 80501",
+  "phone": "(303) 678-8844",
+  "website": "longmontsmallanimalhospital.com",
+  "owner": "Mimi Elliott, DVM & Tory Wunder, DVM",
+  "coords": { "lat": 40.1661, "lng": -105.1019 },
+  "hours": "Mon-Fri 7:30am-9pm, Sat 7:30am-5pm, Sun CLOSED",
+  "rating": "4.4-4.5 stars",
+  "reviewCount": "251-394",
+  "priority": 5,
+  "status": "pending",
+  "added": "2026-03-03",
+  "painPoints": [
+    "Closed Sundays — pet emergencies don't wait",
+    "After-hours emergencies referred out — could capture triage calls",
+    "High review volume suggests high call volume — potential overflow"
+  ],
+  "strengths": [
+    "AAHA Accredited — gold standard for veterinary practices",
+    "Female-owned practice — Drs. Elliott and Wunder",
+    "Extended weekday hours until 9pm — shows commitment",
+    "Exotic pet care (small mammals, reptiles, amphibians) — uncommon specialty",
+    "Same-day urgent care available",
+    "EzyVet client portal + online pharmacy already in place"
+  ],
+  "conversationStarters": [
+    "AAHA accreditation is the gold standard — that says a lot about your standards",
+    "Exotic pet care is really hard to find around here"
+  ],
+  "suggestedApproach": "Already tech-forward with EzyVet portal and online pharmacy. Smaller opportunity — they may have most basics covered. Best angle: Sunday/after-hours emergency triage calls, or automated appointment reminder system. This is a lower-priority stop unless conversation reveals a hidden pain point.",
+  "estimatedOpportunity": "Smaller — likely $75-150 setup if anything"
+}

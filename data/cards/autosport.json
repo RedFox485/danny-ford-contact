@@ -1,0 +1,36 @@
+{
+  "id": "autosport",
+  "name": "AutoSport",
+  "type": "Auto Repair",
+  "address": "1333 Sherman Dr, Longmont, CO 80501",
+  "phone": "(303) 772-4770",
+  "website": "autosportlongmont.com",
+  "owner": "Tim Guile",
+  "coords": { "lat": 40.1775, "lng": -105.0988 },
+  "hours": "Mon-Fri 8am-5pm, Closed weekends",
+  "rating": "4.8-4.9 stars",
+  "reviewCount": "241 (Birdeye)",
+  "priority": 4,
+  "status": "pending",
+  "added": "2026-03-03",
+  "painPoints": [
+    "Closed weekends — but already tech-forward (Tekmetric, online booking)",
+    "Growing service area across Boulder County = increasing call volume",
+    "Active careers page — may be hiring, suggesting growth strain"
+  ],
+  "strengths": [
+    "55 years in business (since 1971) — generational customer base",
+    "Maintains the City of Longmont's Zamboni",
+    "Donates to Habitat for Humanity ReStore — maintains their van",
+    "Ongoing partnership with Longmont OUR Center (food delivery truck)",
+    "CARFAX Top-Rated Service Center",
+    "Longmont Chamber of Commerce member",
+    "European vehicle specialty (BMW, Porsche, Audi, Mercedes)"
+  ],
+  "conversationStarters": [
+    "Heard you maintain the city's Zamboni — that's awesome community service",
+    "55 years in Longmont is incredible — three generations of customers"
+  ],
+  "suggestedApproach": "Already tech-forward with Tekmetric and online booking — harder sell for basic automation. This is a relationship-building visit. Listen more, pitch less. Ask about scaling challenges as their service area grows. Could be a custom integration or workflow optimization play rather than voice bot.",
+  "estimatedOpportunity": "Discovery conversation — unclear until you learn their pain points"
+}

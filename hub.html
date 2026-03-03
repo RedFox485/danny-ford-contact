@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sales Hub</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -276,6 +278,123 @@
     border: 1px solid var(--border); border-radius: 8px; font-size: 13px;
     cursor: pointer; margin-top: 12px; font-family: 'Inter', sans-serif;
     min-height: 48px;
+  }
+
+  /* ===== RECON ===== */
+  #recon-map {
+    width: 100%; height: 240px; border-radius: 10px;
+    border: 1px solid var(--border); margin-bottom: 14px;
+    background: var(--bg-surface);
+  }
+  .recon-count {
+    font-size: 11px; color: var(--text-dim); margin-bottom: 12px;
+    letter-spacing: 0.3px;
+  }
+  .recon-count span { color: var(--accent); font-weight: 700; }
+
+  .recon-card {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 10px; margin-bottom: 10px; overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .recon-card.expanded { border-color: var(--border-focus); }
+
+  .recon-card-header {
+    padding: 14px 14px; cursor: pointer; display: flex;
+    align-items: flex-start; gap: 12px; min-height: 48px;
+  }
+  .recon-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent); color: var(--bg-deep);
+    font-size: 13px; font-weight: 800; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin-top: 1px;
+  }
+  .recon-summary { flex: 1; min-width: 0; }
+  .recon-name {
+    font-size: 15px; font-weight: 700; color: var(--text-primary);
+    letter-spacing: -0.2px; line-height: 1.3;
+  }
+  .recon-meta {
+    font-size: 11px; color: var(--text-muted); margin-top: 2px;
+    display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+  }
+  .recon-type-badge {
+    background: var(--accent-muted); color: var(--accent);
+    padding: 1px 7px; border-radius: 4px; font-weight: 600;
+    font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .recon-arrow {
+    color: var(--text-dim); font-size: 11px; flex-shrink: 0;
+    transition: transform 0.2s; margin-top: 6px;
+  }
+  .recon-card.expanded .recon-arrow { transform: rotate(90deg); color: var(--accent); }
+
+  .recon-detail { display: none; padding: 0 14px 16px; }
+  .recon-card.expanded .recon-detail { display: block; }
+
+  .recon-section-label {
+    font-size: 10px; font-weight: 700; color: var(--accent);
+    letter-spacing: 1.5px; text-transform: uppercase;
+    margin: 14px 0 6px;
+  }
+  .recon-section-label:first-child { margin-top: 0; }
+
+  .recon-detail-row {
+    font-size: 13px; color: var(--text-secondary); line-height: 1.5;
+    padding: 2px 0;
+  }
+  .recon-detail-row strong { color: var(--text-primary); font-weight: 600; }
+
+  .recon-list {
+    margin: 4px 0; padding-left: 16px;
+  }
+  .recon-list li {
+    font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+    margin-bottom: 4px;
+  }
+
+  .recon-approach {
+    background: var(--bg-deep); border-left: 2px solid var(--accent);
+    padding: 10px 14px; margin: 10px 0; border-radius: 0 8px 8px 0;
+    font-size: 13px; color: var(--text-primary); line-height: 1.6;
+  }
+
+  .recon-opportunity {
+    display: inline-block; background: var(--accent-muted); color: var(--accent);
+    padding: 4px 10px; border-radius: 6px; font-weight: 700;
+    font-size: 13px; margin-top: 8px;
+  }
+
+  .recon-contact-bar {
+    display: flex; gap: 8px; margin-top: 12px;
+  }
+  .recon-contact-btn {
+    flex: 1; padding: 10px; text-align: center; border-radius: 8px;
+    font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif;
+    cursor: pointer; min-height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none;
+  }
+  .recon-contact-btn.call {
+    background: var(--accent); color: var(--bg-deep); border: none;
+  }
+  .recon-contact-btn.call:active { background: #d46a2a; }
+  .recon-contact-btn.nav {
+    background: var(--bg-deep); color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+  .recon-contact-btn.nav:active { border-color: var(--accent); color: var(--accent); }
+
+  /* Leaflet marker override for dark theme */
+  .recon-marker {
+    background: var(--accent); color: var(--bg-deep);
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif;
+    border: 2px solid rgba(255,255,255,0.3);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
   }
 
   /* ===== TOP ACCENT BAR (matches business card) ===== */
@@ -706,8 +825,20 @@
   </div>
 </div>
 
+<!-- RECON PAGE -->
+<div class="page" id="page-recon">
+  <div class="page-header">Recon</div>
+  <div class="page-sub">Research cards for today's targets</div>
+  <div id="recon-map"></div>
+  <div class="recon-count" id="reconCount"></div>
+  <div id="reconCards"></div>
+</div>
+
 <!-- TAB BAR -->
 <div class="tabs" id="tabBar" style="display:none;">
+  <div class="tab" onclick="switchTab('recon')">
+    <span class="tab-icon">&#9678;</span>Recon
+  </div>
   <div class="tab active" onclick="switchTab('logger')">
     <span class="tab-icon">+</span>Log
   </div>
@@ -1002,6 +1133,270 @@ document.getElementById('exportBtn').addEventListener('click', function() {
     setTimeout(function() { btn.textContent = 'Copy All Notes to Clipboard'; }, 1500);
   });
 });
+
+// ===== RECON SYSTEM =====
+var reconMap = null;
+var reconCards = [];
+var reconLoaded = false;
+
+function initRecon() {
+  if (reconLoaded) return;
+  reconLoaded = true;
+
+  reconMap = L.map('recon-map', {
+    zoomControl: false,
+    attributionControl: false
+  }).setView([40.1672, -105.1019], 13);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    maxZoom: 19
+  }).addTo(reconMap);
+
+  L.control.zoom({ position: 'topright' }).addTo(reconMap);
+
+  var base = getReconBase();
+  fetch(base + 'data/manifest.json?v=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(manifest) {
+      var promises = manifest.cards.map(function(id) {
+        return fetch(base + 'data/cards/' + id + '.json?v=' + Date.now())
+          .then(function(r) { return r.json(); });
+      });
+      return Promise.all(promises);
+    })
+    .then(function(cards) {
+      reconCards = cards.sort(function(a, b) { return a.priority - b.priority; });
+      renderReconCards();
+      renderReconMap();
+    })
+    .catch(function(err) {
+      console.error('Recon load error:', err);
+      var c = document.getElementById('reconCards');
+      c.textContent = 'Could not load recon cards. Check data/manifest.json.';
+    });
+}
+
+function getReconBase() {
+  var loc = window.location;
+  if (loc.protocol === 'file:') return '';
+  var path = loc.pathname;
+  var dir = path.substring(0, path.lastIndexOf('/') + 1);
+  return loc.origin + dir;
+}
+
+// Safe text helper - all card data is from our own JSON files (not user input),
+// but we still use textContent for plain text and only construct DOM elements safely
+function buildReconCard(card, num) {
+  var el = document.createElement('div');
+  el.className = 'recon-card';
+  el.id = 'recon-' + card.id;
+
+  // Header
+  var header = document.createElement('div');
+  header.className = 'recon-card-header';
+  header.addEventListener('click', function() { toggleRecon(card.id); });
+
+  var numEl = document.createElement('div');
+  numEl.className = 'recon-num';
+  numEl.textContent = num;
+
+  var summary = document.createElement('div');
+  summary.className = 'recon-summary';
+
+  var nameEl = document.createElement('div');
+  nameEl.className = 'recon-name';
+  nameEl.textContent = card.name;
+
+  var meta = document.createElement('div');
+  meta.className = 'recon-meta';
+
+  var badge = document.createElement('span');
+  badge.className = 'recon-type-badge';
+  badge.textContent = card.type;
+
+  var rating = document.createElement('span');
+  rating.textContent = card.rating;
+
+  meta.appendChild(badge);
+  meta.appendChild(rating);
+  summary.appendChild(nameEl);
+  summary.appendChild(meta);
+
+  var arrow = document.createElement('span');
+  arrow.className = 'recon-arrow';
+  arrow.textContent = '\u25B6';
+
+  header.appendChild(numEl);
+  header.appendChild(summary);
+  header.appendChild(arrow);
+
+  // Detail section
+  var detail = document.createElement('div');
+  detail.className = 'recon-detail';
+
+  // Contact section
+  addSectionLabel(detail, 'Contact');
+  addDetailRow(detail, 'Owner', card.owner);
+  addDetailRow(detail, 'Phone', card.phone);
+  addDetailRow(detail, 'Address', card.address);
+  addDetailRow(detail, 'Hours', card.hours);
+  if (card.website) addDetailRow(detail, 'Web', card.website);
+
+  // Pain points
+  addSectionLabel(detail, 'Pain Points');
+  addList(detail, card.painPoints);
+
+  // Conversation starters
+  addSectionLabel(detail, 'Conversation Starters');
+  addList(detail, card.conversationStarters);
+
+  // Strengths
+  addSectionLabel(detail, 'Things They Do Well');
+  addList(detail, card.strengths);
+
+  // Approach
+  addSectionLabel(detail, 'Suggested Approach');
+  var approach = document.createElement('div');
+  approach.className = 'recon-approach';
+  approach.textContent = card.suggestedApproach;
+  detail.appendChild(approach);
+
+  // Opportunity
+  var opp = document.createElement('div');
+  opp.className = 'recon-opportunity';
+  opp.textContent = card.estimatedOpportunity;
+  detail.appendChild(opp);
+
+  // Contact buttons
+  var bar = document.createElement('div');
+  bar.className = 'recon-contact-bar';
+
+  var callBtn = document.createElement('a');
+  callBtn.className = 'recon-contact-btn call';
+  callBtn.href = 'tel:' + card.phone.replace(/[^+\d]/g, '');
+  callBtn.textContent = 'Call';
+
+  var navBtn = document.createElement('a');
+  navBtn.className = 'recon-contact-btn nav';
+  navBtn.href = 'https://maps.apple.com/?q=' + encodeURIComponent(card.address);
+  navBtn.target = '_blank';
+  navBtn.rel = 'noopener';
+  navBtn.textContent = 'Navigate';
+
+  bar.appendChild(callBtn);
+  bar.appendChild(navBtn);
+  detail.appendChild(bar);
+
+  el.appendChild(header);
+  el.appendChild(detail);
+  return el;
+}
+
+function addSectionLabel(parent, text) {
+  var el = document.createElement('div');
+  el.className = 'recon-section-label';
+  el.textContent = text;
+  parent.appendChild(el);
+}
+
+function addDetailRow(parent, label, value) {
+  var el = document.createElement('div');
+  el.className = 'recon-detail-row';
+  var strong = document.createElement('strong');
+  strong.textContent = label + ': ';
+  el.appendChild(strong);
+  el.appendChild(document.createTextNode(value));
+  parent.appendChild(el);
+}
+
+function addList(parent, items) {
+  var ul = document.createElement('ul');
+  ul.className = 'recon-list';
+  items.forEach(function(item) {
+    var li = document.createElement('li');
+    li.textContent = item;
+    ul.appendChild(li);
+  });
+  parent.appendChild(ul);
+}
+
+function renderReconCards() {
+  var container = document.getElementById('reconCards');
+  while (container.firstChild) container.removeChild(container.firstChild);
+
+  var countEl = document.getElementById('reconCount');
+  countEl.textContent = '';
+  var span = document.createElement('span');
+  span.textContent = reconCards.length;
+  countEl.appendChild(span);
+  countEl.appendChild(document.createTextNode(' targets loaded'));
+
+  reconCards.forEach(function(card, i) {
+    container.appendChild(buildReconCard(card, i + 1));
+  });
+}
+
+function renderReconMap() {
+  if (!reconMap) return;
+  var bounds = [];
+
+  reconCards.forEach(function(card, i) {
+    var num = i + 1;
+    var markerDiv = document.createElement('div');
+    markerDiv.className = 'recon-marker';
+    markerDiv.textContent = num;
+
+    var icon = L.divIcon({
+      className: '',
+      html: markerDiv.outerHTML,
+      iconSize: [28, 28],
+      iconAnchor: [14, 14]
+    });
+
+    var popupDiv = document.createElement('div');
+    popupDiv.style.cssText = 'font-family:Inter,sans-serif;font-size:13px;min-width:160px;';
+    var pName = document.createElement('strong');
+    pName.textContent = card.name;
+    var pType = document.createElement('div');
+    pType.style.cssText = 'color:#888;font-size:11px;';
+    pType.textContent = card.type + ' \u2022 ' + card.owner;
+    popupDiv.appendChild(pName);
+    popupDiv.appendChild(pType);
+
+    var marker = L.marker([card.coords.lat, card.coords.lng], { icon: icon }).addTo(reconMap);
+    marker.bindPopup(popupDiv, { closeButton: false });
+
+    marker.on('click', function() {
+      var el = document.getElementById('recon-' + card.id);
+      if (el && !el.classList.contains('expanded')) toggleRecon(card.id);
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    bounds.push([card.coords.lat, card.coords.lng]);
+  });
+
+  if (bounds.length > 0) {
+    reconMap.fitBounds(bounds, { padding: [30, 30] });
+  }
+}
+
+function toggleRecon(id) {
+  var el = document.getElementById('recon-' + id);
+  if (!el) return;
+  el.classList.toggle('expanded');
+}
+
+// Hook into tab switching to init recon lazily
+var origSwitchTab = switchTab;
+switchTab = function(name) {
+  origSwitchTab(name);
+  if (name === 'recon') {
+    setTimeout(function() {
+      initRecon();
+      if (reconMap) reconMap.invalidateSize();
+    }, 100);
+  }
+};
 </script>
 </body>
 </html>
