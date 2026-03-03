@@ -343,6 +343,32 @@
     padding: 6px 0;
   }
 
+  /* ===== PORTFOLIO DETAIL EXPAND ===== */
+  .folio-detail {
+    display: none; margin-top: 12px; padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .folio-detail.open { display: block; }
+  .folio-detail h4 {
+    color: var(--accent); font-size: 10px; text-transform: uppercase;
+    letter-spacing: 1.5px; margin: 10px 0 4px; font-weight: 700;
+  }
+  .folio-detail h4:first-child { margin-top: 0; }
+  .folio-detail p {
+    font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+    margin-bottom: 4px;
+  }
+  .folio-detail ul {
+    padding-left: 16px; font-size: 13px; color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .folio-detail li { margin-bottom: 4px; }
+  .folio-card[onclick] { cursor: pointer; }
+  .folio-card[onclick] .folio-type::after {
+    content: ' -- tap for details'; font-size: 9px; color: var(--text-dim);
+    letter-spacing: 0.5px; text-transform: none;
+  }
+
   /* ===== PAGE HEADER ACCENT ===== */
   .page-accent {
     width: 32px; height: 2px; margin-bottom: 16px;
@@ -565,25 +591,73 @@
   <div class="page-sub">Show clients what you've built.</div>
   <div class="page-accent"></div>
 
-  <div class="folio-card">
-    <div class="folio-type">AI / Automation</div>
-    <div class="folio-title">AI Lead Pipeline</div>
-    <div class="folio-desc">Automated lead capture, scoring, and routing system. Pulls prospects from multiple sources, qualifies them with AI, and routes hot leads for immediate follow-up.</div>
+  <div class="folio-card" onclick="toggleFolioDetail(this)">
+    <div class="folio-type">AI / Voice -- Flagship Product</div>
+    <div class="folio-title">AI Receptionist for Small Business</div>
+    <div class="folio-desc">24/7 AI phone answering system built for trades and service businesses. Answers calls, takes messages, books appointments, routes emergencies. Never misses a lead.</div>
     <div class="folio-tags">
-      <span class="folio-tag">AI</span>
-      <span class="folio-tag">Automation</span>
-      <span class="folio-tag">Lead Gen</span>
+      <span class="folio-tag">Voice AI</span>
+      <span class="folio-tag">Twilio</span>
+      <span class="folio-tag">Real-time</span>
+      <span class="folio-tag">Production</span>
+    </div>
+    <div class="folio-detail">
+      <h4>The Problem</h4>
+      <p>Service businesses miss 30-60% of incoming calls when crews are out on jobs. Every missed call is a lost lead worth $200-2,000+.</p>
+      <h4>What I Built</h4>
+      <p>A custom voice AI pipeline that answers calls naturally, understands context, captures caller information, and routes urgent calls to the business owner's phone. Integrates with Twilio for telephony and runs on dedicated infrastructure.</p>
+      <h4>Key Details</h4>
+      <ul>
+        <li>Real-time voice processing with natural conversation flow</li>
+        <li>Custom-trained for each business (industry terminology, services, pricing)</li>
+        <li>After-hours handling with emergency escalation</li>
+        <li>Call logs and transcripts delivered to the business owner</li>
+        <li>Live business phone line: (720) 636-9310</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="folio-card">
+    <div class="folio-type">Sales Automation</div>
+    <div class="folio-title">Lead Capture + Pipeline System</div>
+    <div class="folio-desc">Automated lead capture from multiple sources with AI-powered filtering (94% accuracy), proposal generation, and full pipeline tracking from first contact to closed deal.</div>
+    <div class="folio-tags">
+      <span class="folio-tag">AI Filtering</span>
+      <span class="folio-tag">CRM</span>
+      <span class="folio-tag">Pipeline</span>
+    </div>
+  </div>
+
+  <div class="folio-card">
+    <div class="folio-type">Business Automation</div>
+    <div class="folio-title">Autonomous Task Orchestrator</div>
+    <div class="folio-desc">AI-powered system that runs 10+ scheduled business operations autonomously: daily briefings, cost tracking, health monitoring, work queue processing, and client follow-ups. Controllable from phone via Discord.</div>
+    <div class="folio-tags">
+      <span class="folio-tag">Orchestration</span>
+      <span class="folio-tag">Scheduling</span>
+      <span class="folio-tag">Monitoring</span>
     </div>
   </div>
 
   <div class="folio-card">
     <div class="folio-type">Voice / POS</div>
-    <div class="folio-title">EasyPOS Voice System</div>
-    <div class="folio-desc">Voice-activated point-of-sale for coffee shops. Staff speaks orders naturally, AI parses items, modifiers, and quantities in real time. 94% accuracy.</div>
+    <div class="folio-title">EasyPOS Voice Ordering</div>
+    <div class="folio-desc">Voice-activated point-of-sale for coffee shops. Staff speaks orders naturally, AI parses items, modifiers, and quantities in real time. 94% parsing accuracy.</div>
     <div class="folio-tags">
       <span class="folio-tag">Voice AI</span>
       <span class="folio-tag">Real-time</span>
       <span class="folio-tag">POS</span>
+    </div>
+  </div>
+
+  <div class="folio-card">
+    <div class="folio-type">Client Management</div>
+    <div class="folio-title">Lightweight CRM + Revenue Tracker</div>
+    <div class="folio-desc">Client database with proposal tracking, win/loss analytics, follow-up reminders, lifetime value calculations, and unified revenue tracking across multiple income streams.</div>
+    <div class="folio-tags">
+      <span class="folio-tag">CRM</span>
+      <span class="folio-tag">Analytics</span>
+      <span class="folio-tag">Revenue</span>
     </div>
   </div>
 
@@ -600,8 +674,8 @@
 
   <div class="folio-card">
     <div class="folio-type">Education / Infrastructure</div>
-    <div class="folio-title">3D Printing Lab</div>
-    <div class="folio-desc">Designed and built a district-wide 3D printing program for SVVSD (60 schools, 30K students). Networked 16 printers, built curriculum, trained staff.</div>
+    <div class="folio-title">District-Wide 3D Printing Lab</div>
+    <div class="folio-desc">Designed and built a 3D printing program for SVVSD (60 schools, 30K students with access). Networked 16 printers, built curriculum, trained staff.</div>
     <div class="folio-tags">
       <span class="folio-tag">Education</span>
       <span class="folio-tag">Hardware</span>
@@ -611,8 +685,8 @@
 
   <div class="folio-card">
     <div class="folio-type">Hardware / Engineering</div>
-    <div class="folio-title">CNC Router Build</div>
-    <div class="folio-desc">Custom CNC router designed and fabricated from scratch. Full mechanical design, electronics integration, and control software setup.</div>
+    <div class="folio-title">Custom CNC Router</div>
+    <div class="folio-desc">CNC router designed and fabricated from scratch. Full mechanical design, electronics integration, and control software setup.</div>
     <div class="folio-tags">
       <span class="folio-tag">CNC</span>
       <span class="folio-tag">Fabrication</span>
@@ -737,6 +811,12 @@ function switchTab(name) {
   document.getElementById('page-' + name).classList.add('active');
   document.querySelector('.tab[onclick*="' + name + '"]').classList.add('active');
   if (name === 'history') renderHistory();
+}
+
+// ===== PORTFOLIO =====
+function toggleFolioDetail(card) {
+  var detail = card.querySelector('.folio-detail');
+  if (detail) detail.classList.toggle('open');
 }
 
 // ===== PLAYBOOK =====
