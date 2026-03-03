@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Sales Hub</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: #0d0d0d;
+    color: #f5f5f5;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding-bottom: 72px;
+  }
+
+  /* Tab bar */
+  .tabs {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    display: flex; background: #111; border-top: 1px solid #222;
+    z-index: 100;
+  }
+  .tab {
+    flex: 1; padding: 12px 0 10px; text-align: center;
+    font-size: 11px; font-weight: 600; color: #666;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    cursor: pointer; transition: color 0.2s;
+  }
+  .tab.active { color: #e87a3a; }
+  .tab-icon { font-size: 20px; display: block; margin-bottom: 2px; }
+
+  /* Pages */
+  .page { display: none; padding: 20px 16px; }
+  .page.active { display: block; }
+
+  /* Header */
+  .page-header {
+    font-size: 22px; font-weight: 800; margin-bottom: 4px;
+  }
+  .page-sub {
+    font-size: 12px; color: #666; margin-bottom: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Logger */
+  .capture-btn {
+    width: 100%; padding: 16px; background: #e87a3a; color: #0d0d0d;
+    border: none; border-radius: 10px; font-size: 16px; font-weight: 700;
+    cursor: pointer; margin-bottom: 16px; transition: background 0.2s;
+  }
+  .capture-btn:active { background: #cc6a2e; }
+  .capture-btn:disabled { background: #444; color: #888; }
+
+  .location-bar {
+    background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px;
+    padding: 12px 14px; margin-bottom: 14px; font-size: 13px; color: #aaa;
+    display: none;
+  }
+  .location-bar .addr { color: #f5f5f5; font-weight: 500; }
+  .location-bar .time { color: #666; font-size: 11px; margin-top: 4px; }
+
+  .voice-prompt {
+    font-size: 12px; color: #e87a3a; margin-bottom: 6px; font-weight: 500;
+  }
+  .voice-area {
+    width: 100%; min-height: 120px; background: #1a1a1a;
+    border: 1px solid #2a2a2a; border-radius: 8px; color: #f5f5f5;
+    font-family: 'Inter', sans-serif; font-size: 15px; padding: 14px;
+    resize: vertical; line-height: 1.5;
+  }
+  .voice-area::placeholder { color: #555; }
+  .voice-area:focus { outline: none; border-color: #e87a3a; }
+
+  .save-visit-btn {
+    width: 100%; padding: 14px; background: #1a1a1a; color: #e87a3a;
+    border: 1px solid #e87a3a; border-radius: 10px; font-size: 15px;
+    font-weight: 600; cursor: pointer; margin-top: 14px; transition: all 0.2s;
+  }
+  .save-visit-btn:active { background: #e87a3a; color: #0d0d0d; }
+
+  .logger-form { display: none; }
+  .logger-form.active { display: block; }
+
+  /* History */
+  .visit-card {
+    background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px;
+    padding: 14px; margin-bottom: 12px;
+  }
+  .visit-card .v-addr { font-size: 13px; color: #e87a3a; font-weight: 500; margin-bottom: 4px; }
+  .visit-card .v-time { font-size: 11px; color: #555; margin-bottom: 8px; }
+  .visit-card .v-notes { font-size: 14px; color: #ccc; line-height: 1.5; white-space: pre-wrap; }
+  .visit-card .v-delete {
+    font-size: 11px; color: #555; cursor: pointer; margin-top: 8px;
+    display: inline-block;
+  }
+
+  .empty-state {
+    text-align: center; padding: 60px 20px; color: #444;
+  }
+  .empty-state-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state-text { font-size: 14px; }
+
+  .history-stats {
+    display: flex; gap: 10px; margin-bottom: 16px;
+  }
+  .stat-box {
+    flex: 1; background: #1a1a1a; border: 1px solid #2a2a2a;
+    border-radius: 8px; padding: 12px; text-align: center;
+  }
+  .stat-num { font-size: 24px; font-weight: 800; color: #e87a3a; }
+  .stat-label { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+  /* Playbook */
+  .section-card {
+    background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px;
+    margin-bottom: 12px; overflow: hidden;
+  }
+  .section-header {
+    padding: 14px; cursor: pointer; display: flex;
+    justify-content: space-between; align-items: center;
+    font-size: 15px; font-weight: 600;
+  }
+  .section-header .arrow { color: #666; transition: transform 0.2s; font-size: 12px; }
+  .section-header.open .arrow { transform: rotate(90deg); }
+  .section-body {
+    display: none; padding: 0 14px 14px;
+    font-size: 14px; color: #bbb; line-height: 1.7;
+  }
+  .section-body.open { display: block; }
+  .section-body h4 {
+    color: #e87a3a; font-size: 12px; text-transform: uppercase;
+    letter-spacing: 1px; margin: 12px 0 6px;
+  }
+  .section-body h4:first-child { margin-top: 0; }
+  .section-body ul { padding-left: 18px; }
+  .section-body li { margin-bottom: 6px; }
+  .section-body .price { color: #e87a3a; font-weight: 600; }
+  .section-body .pitch-line {
+    background: #0d0d0d; border-left: 2px solid #e87a3a;
+    padding: 8px 12px; margin: 8px 0; border-radius: 0 6px 6px 0;
+    font-style: italic; color: #ddd;
+  }
+
+  .export-btn {
+    width: 100%; padding: 12px; background: #1a1a1a; color: #888;
+    border: 1px solid #2a2a2a; border-radius: 8px; font-size: 13px;
+    cursor: pointer; margin-top: 8px; font-family: 'Inter', sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGGER PAGE -->
+<div class="page active" id="page-logger">
+  <div class="page-header">Log Visit</div>
+  <div class="page-sub">One tap, voice-type your notes, done.</div>
+
+  <button class="capture-btn" id="captureBtn">Capture Location</button>
+
+  <div class="logger-form" id="loggerForm">
+    <div class="location-bar" id="locationBar">
+      <div class="addr" id="addrText">Getting address...</div>
+      <div class="time" id="timeText"></div>
+    </div>
+
+    <div class="voice-prompt">Include: business name, who you talked to, interest level, what they need, next step</div>
+    <textarea class="voice-area" id="notesArea" placeholder="Voice-type your notes here..."></textarea>
+
+    <button class="save-visit-btn" id="saveVisitBtn">Save Visit</button>
+  </div>
+</div>
+
+<!-- PLAYBOOK PAGE -->
+<div class="page" id="page-playbook">
+  <div class="page-header">Sales Playbook</div>
+  <div class="page-sub">Quick reference before you walk in.</div>
+
+  <div class="section-card">
+    <div class="section-header" onclick="toggleSection(this)">
+      Before You Walk In
+      <span class="arrow">&#9654;</span>
+    </div>
+    <div class="section-body">
+      <h4>Look for these</h4>
+      <ul>
+        <li>"Leave a message" or "We'll call you back" signs</li>
+        <li>Paper appointment books or wall calendars</li>
+        <li>Old/no website (check the window or truck)</li>
+        <li>Receptionist juggling phone + customers</li>
+        <li>Handwritten price lists or hours signs</li>
+        <li>"Now hiring" sign (they're stretched thin)</li>
+      </ul>
+      <h4>Opening lines</h4>
+      <div class="pitch-line">"Hey, I work with trades businesses around here helping them stop losing calls when they're out on jobs. Do you guys ever have that problem?"</div>
+      <div class="pitch-line">"I noticed you don't have online booking &mdash; is that something your customers ever ask about?"</div>
+      <div class="pitch-line">"I'm building my portfolio locally and offering some steep discounts. Who handles your tech stuff?"</div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-header" onclick="toggleSection(this)">
+      Services &amp; Pricing
+      <span class="arrow">&#9654;</span>
+    </div>
+    <div class="section-body">
+      <h4>AI Receptionist</h4>
+      <p>Never miss a call. AI answers 24/7, takes messages, books appointments. <span class="price">$300 setup + $50/mo</span></p>
+
+      <h4>Website Rebuild</h4>
+      <p>Modern, mobile-friendly site. 5-7 pages, looks professional. <span class="price">$400&ndash;600</span></p>
+
+      <h4>Google Presence Cleanup</h4>
+      <p>Google Business optimization, review strategy, basic local SEO. <span class="price">$150&ndash;250</span></p>
+
+      <h4>Automated Follow-ups</h4>
+      <p>Auto texts/emails to customers after service. Keeps them coming back. <span class="price">$200&ndash;400</span></p>
+
+      <h4>Online Booking</h4>
+      <p>Customers book online, syncs to their calendar. No more phone tag. <span class="price">$200&ndash;350</span></p>
+
+      <h4>Custom Tool</h4>
+      <p>Inventory, invoicing, dashboards &mdash; whatever they need. <span class="price">$300&ndash;800</span></p>
+
+      <h4>Your angle</h4>
+      <div class="pitch-line">"I'm building my local portfolio, so I'm pricing way below what agencies charge. I just need a few businesses I can point to."</div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-header" onclick="toggleSection(this)">
+      Objection Handles
+      <span class="arrow">&#9654;</span>
+    </div>
+    <div class="section-body">
+      <h4>"We're too busy right now"</h4>
+      <div class="pitch-line">"That's actually the best time &mdash; you're busy enough that missed calls are costing you money. I handle all the setup, you don't have to do anything."</div>
+
+      <h4>"We already have a website / system"</h4>
+      <div class="pitch-line">"Totally &mdash; when's the last time it was updated? I see a lot of businesses where the site worked fine 5 years ago but now customers expect online booking and mobile-friendly pages."</div>
+
+      <h4>"How do I know this works?"</h4>
+      <div class="pitch-line">"Fair question. I can set up a small pilot &mdash; if you don't see value in the first month, you don't pay for month two."</div>
+
+      <h4>"I need to talk to my partner"</h4>
+      <div class="pitch-line">"Absolutely. Here's my card. Can I follow up Thursday? That way I'm not bugging you, but you've got time to chat with them."</div>
+
+      <h4>"Sounds expensive"</h4>
+      <div class="pitch-line">"Totally understand. What's your average job worth? If you're missing even 2-3 calls a week, that's way more than what this costs. But I'm also the cheapest option out there right now because I'm building locally."</div>
+
+      <h4>"I'm not interested"</h4>
+      <div class="pitch-line">"No worries at all. Mind if I leave my card? Things change and I'm right here in Longmont."</div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-header" onclick="toggleSection(this)">
+      Closing &amp; Next Steps
+      <span class="arrow">&#9654;</span>
+    </div>
+    <div class="section-body">
+      <h4>If they're interested</h4>
+      <ul>
+        <li>Get their name, number, and email</li>
+        <li>Ask what their biggest pain point is right now</li>
+        <li>Propose a specific next step: "I'll put together a quick mockup / plan and send it over by Friday"</li>
+        <li>Don't push for payment on the spot &mdash; schedule a follow-up</li>
+      </ul>
+      <h4>If they're lukewarm</h4>
+      <ul>
+        <li>Leave the card</li>
+        <li>Ask if you can follow up in a week</li>
+        <li>Note what they seemed most interested in</li>
+      </ul>
+      <h4>Always</h4>
+      <ul>
+        <li>Be genuine. You're building something, not reading a script.</li>
+        <li>Ask questions more than you pitch.</li>
+        <li>Log the visit in the tracker before you drive away.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY PAGE -->
+<div class="page" id="page-history">
+  <div class="page-header">Visit Log</div>
+  <div class="page-sub">All visits, newest first.</div>
+
+  <div class="history-stats" id="historyStats" style="display:none;">
+    <div class="stat-box">
+      <div class="stat-num" id="statTotal">0</div>
+      <div class="stat-label">Total Visits</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="statToday">0</div>
+      <div class="stat-label">Today</div>
+    </div>
+  </div>
+
+  <div id="historyList"></div>
+
+  <button class="export-btn" id="exportBtn" style="display:none;">Copy All Notes to Clipboard</button>
+</div>
+
+<!-- TAB BAR -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('logger')">
+    <span class="tab-icon">+</span>
+    Log
+  </div>
+  <div class="tab" onclick="switchTab('playbook')">
+    <span class="tab-icon">&#9776;</span>
+    Playbook
+  </div>
+  <div class="tab" onclick="switchTab('history')">
+    <span class="tab-icon">&#8942;</span>
+    History
+  </div>
+</div>
+
+<script>
+// Tab switching
+function switchTab(name) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelector('.tab[onclick*="' + name + '"]').classList.add('active');
+  if (name === 'history') renderHistory();
+}
+
+// Playbook accordion
+function toggleSection(el) {
+  el.classList.toggle('open');
+  el.nextElementSibling.classList.toggle('open');
+}
+
+// Visit Logger
+var currentCoords = null;
+var currentAddress = '';
+
+document.getElementById('captureBtn').addEventListener('click', function() {
+  var btn = this;
+  btn.disabled = true;
+  btn.textContent = 'Getting location...';
+
+  if (!navigator.geolocation) {
+    btn.textContent = 'Location not supported';
+    setTimeout(function() { btn.disabled = false; btn.textContent = 'Capture Location'; }, 2000);
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(function(pos) {
+    currentCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+    var now = new Date();
+    document.getElementById('timeText').textContent =
+      now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) +
+      ' at ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+    // Reverse geocode via OpenStreetMap
+    fetch('https://nominatim.openstreetmap.org/reverse?lat=' + currentCoords.lat +
+      '&lon=' + currentCoords.lng + '&format=json&addressdetails=1')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var a = data.address || {};
+        var parts = [];
+        if (a.house_number && a.road) parts.push(a.house_number + ' ' + a.road);
+        else if (a.road) parts.push(a.road);
+        if (a.city || a.town || a.village) parts.push(a.city || a.town || a.village);
+        currentAddress = parts.join(', ') || data.display_name || 'Location captured';
+        document.getElementById('addrText').textContent = currentAddress;
+      })
+      .catch(function() {
+        currentAddress = currentCoords.lat.toFixed(5) + ', ' + currentCoords.lng.toFixed(5);
+        document.getElementById('addrText').textContent = currentAddress;
+      });
+
+    document.getElementById('locationBar').style.display = 'block';
+    document.getElementById('loggerForm').classList.add('active');
+    btn.textContent = 'Update Location';
+    btn.disabled = false;
+    document.getElementById('notesArea').focus();
+
+  }, function() {
+    btn.textContent = 'Location denied - tap to retry';
+    btn.disabled = false;
+    document.getElementById('loggerForm').classList.add('active');
+    document.getElementById('addrText').textContent = 'No location - type address in notes';
+    document.getElementById('locationBar').style.display = 'block';
+    var now = new Date();
+    document.getElementById('timeText').textContent =
+      now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) +
+      ' at ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  }, { enableHighAccuracy: true, timeout: 10000 });
+});
+
+// Save visit
+document.getElementById('saveVisitBtn').addEventListener('click', function() {
+  var notes = document.getElementById('notesArea').value.trim();
+  if (!notes) { document.getElementById('notesArea').focus(); return; }
+
+  var visit = {
+    id: Date.now(),
+    address: currentAddress || 'No location',
+    coords: currentCoords,
+    time: new Date().toISOString(),
+    notes: notes
+  };
+
+  var visits = JSON.parse(localStorage.getItem('salesVisits') || '[]');
+  visits.unshift(visit);
+  localStorage.setItem('salesVisits', JSON.stringify(visits));
+
+  // Reset form
+  document.getElementById('notesArea').value = '';
+  document.getElementById('loggerForm').classList.remove('active');
+  document.getElementById('locationBar').style.display = 'none';
+  document.getElementById('captureBtn').textContent = 'Capture Location';
+  currentCoords = null;
+  currentAddress = '';
+
+  // Flash confirmation
+  var btn = document.getElementById('captureBtn');
+  btn.textContent = 'Saved!';
+  btn.style.background = '#2a7a3a';
+  setTimeout(function() {
+    btn.textContent = 'Capture Location';
+    btn.style.background = '#e87a3a';
+  }, 1500);
+});
+
+// History rendering using safe DOM methods
+function renderHistory() {
+  var visits = JSON.parse(localStorage.getItem('salesVisits') || '[]');
+  var list = document.getElementById('historyList');
+  var stats = document.getElementById('historyStats');
+  var exportBtn = document.getElementById('exportBtn');
+
+  // Clear existing children
+  while (list.firstChild) list.removeChild(list.firstChild);
+
+  if (visits.length === 0) {
+    stats.style.display = 'none';
+    exportBtn.style.display = 'none';
+    var empty = document.createElement('div');
+    empty.className = 'empty-state';
+    var icon = document.createElement('div');
+    icon.className = 'empty-state-icon';
+    icon.textContent = '\uD83D\uDCCD';
+    var text = document.createElement('div');
+    text.className = 'empty-state-text';
+    text.textContent = 'No visits logged yet. Hit the Log tab to get started.';
+    empty.appendChild(icon);
+    empty.appendChild(text);
+    list.appendChild(empty);
+    return;
+  }
+
+  stats.style.display = 'flex';
+  exportBtn.style.display = 'block';
+  document.getElementById('statTotal').textContent = visits.length;
+
+  var today = new Date().toDateString();
+  var todayCount = visits.filter(function(v) { return new Date(v.time).toDateString() === today; }).length;
+  document.getElementById('statToday').textContent = todayCount;
+
+  visits.forEach(function(v) {
+    var card = document.createElement('div');
+    card.className = 'visit-card';
+
+    var addr = document.createElement('div');
+    addr.className = 'v-addr';
+    addr.textContent = v.address;
+
+    var d = new Date(v.time);
+    var timeStr = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) +
+      ' at ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    var time = document.createElement('div');
+    time.className = 'v-time';
+    time.textContent = timeStr;
+
+    var notes = document.createElement('div');
+    notes.className = 'v-notes';
+    notes.textContent = v.notes;
+
+    var del = document.createElement('span');
+    del.className = 'v-delete';
+    del.textContent = 'delete';
+    del.addEventListener('click', function() { deleteVisit(v.id); });
+
+    card.appendChild(addr);
+    card.appendChild(time);
+    card.appendChild(notes);
+    card.appendChild(del);
+    list.appendChild(card);
+  });
+}
+
+function deleteVisit(id) {
+  if (!confirm('Delete this visit?')) return;
+  var visits = JSON.parse(localStorage.getItem('salesVisits') || '[]');
+  visits = visits.filter(function(v) { return v.id !== id; });
+  localStorage.setItem('salesVisits', JSON.stringify(visits));
+  renderHistory();
+}
+
+// Export
+document.getElementById('exportBtn').addEventListener('click', function() {
+  var visits = JSON.parse(localStorage.getItem('salesVisits') || '[]');
+  var text = visits.map(function(v) {
+    var d = new Date(v.time);
+    var timeStr = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) +
+      ' ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    return '--- ' + timeStr + ' ---\n' + v.address + '\n' + v.notes;
+  }).join('\n\n');
+  navigator.clipboard.writeText(text).then(function() {
+    var btn = document.getElementById('exportBtn');
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = 'Copy All Notes to Clipboard'; }, 1500);
+  });
+});
+</script>
+</body>
+</html>
