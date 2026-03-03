@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Dial>
-        <Sip>sip:danny@dannyford.sip.twilio.com</Sip>
+        <Number url="https://redfox485.github.io/danny-ford-contact/whisper.xml">+17208095051</Number>
     </Dial>
 </Response>
