@@ -303,7 +303,7 @@
     <button class="pin-key" onclick="pinInput('0')">0</button>
     <button class="pin-key fn" onclick="pinInput('del')">Del</button>
   </div>
-  <div class="lock-setup-msg" id="lockMsg"></div>
+  <div class="lock-setup-msg" id="lockMsg">Danny Ford Sales Hub</div>
 </div>
 
 <!-- LOGGER PAGE -->
@@ -498,21 +498,9 @@
 <script>
 // ===== PIN LOCK =====
 var pinCode = '';
-var storedPin = localStorage.getItem('hubPin');
-var isSetup = !storedPin;
-
-// 30-day device remember
+// PIN verified against hash baked into the page — no setup flow
+var MASTER_HASH = 'yb40';
 var REMEMBER_DAYS = 30;
-var rememberToken = localStorage.getItem('hubRemember');
-var remembered = false;
-if (rememberToken && storedPin) {
-  try {
-    var tokenData = JSON.parse(atob(rememberToken));
-    if (tokenData.exp > Date.now() && tokenData.h === simpleHash(storedPin)) {
-      remembered = true;
-    }
-  } catch(e) { /* invalid token, require PIN */ }
-}
 
 function simpleHash(str) {
   var hash = 0;
@@ -523,21 +511,21 @@ function simpleHash(str) {
   return hash.toString(36);
 }
 
-function setRememberToken(pin) {
-  var data = { h: simpleHash(pin), exp: Date.now() + (REMEMBER_DAYS * 86400000) };
+function setRememberToken() {
+  var data = { v: 1, exp: Date.now() + (REMEMBER_DAYS * 86400000) };
   localStorage.setItem('hubRemember', btoa(JSON.stringify(data)));
 }
 
-if (remembered) {
-  unlock();
-} else if (isSetup) {
-  document.getElementById('lockTitle').textContent = 'Set a PIN';
-  document.getElementById('lockSub').textContent = 'Choose a 4-digit access code';
-  document.getElementById('lockMsg').textContent = 'First time setup. You will use this to unlock.';
+// Check 30-day device remember
+var rememberToken = localStorage.getItem('hubRemember');
+var remembered = false;
+if (rememberToken) {
+  try {
+    var tokenData = JSON.parse(atob(rememberToken));
+    if (tokenData.exp > Date.now()) remembered = true;
+  } catch(e) { /* invalid token */ }
 }
-
-var confirmPin = '';
-var confirmStep = false;
+if (remembered) unlock();
 
 function pinInput(val) {
   if (val === 'clear') {
@@ -567,34 +555,11 @@ function updateDots() {
 }
 
 function checkPin() {
-  if (isSetup) {
-    if (!confirmStep) {
-      confirmPin = pinCode;
-      confirmStep = true;
-      pinCode = '';
-      updateDots();
-      document.getElementById('lockTitle').textContent = 'Confirm PIN';
-      document.getElementById('lockSub').textContent = 'Enter the same code again';
-      document.getElementById('lockMsg').textContent = '';
-    } else {
-      if (pinCode === confirmPin) {
-        localStorage.setItem('hubPin', pinCode);
-        setRememberToken(pinCode);
-        unlock();
-      } else {
-        wrongPin();
-        confirmStep = false;
-        document.getElementById('lockTitle').textContent = 'Set a PIN';
-        document.getElementById('lockSub').textContent = 'PINs did not match. Try again.';
-      }
-    }
+  if (simpleHash(pinCode) === MASTER_HASH) {
+    setRememberToken();
+    unlock();
   } else {
-    if (pinCode === storedPin) {
-      setRememberToken(pinCode);
-      unlock();
-    } else {
-      wrongPin();
-    }
+    wrongPin();
   }
 }
 
