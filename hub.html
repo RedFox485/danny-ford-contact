@@ -2,159 +2,314 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sales Hub</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body {
-    background: #0d0d0d;
-    color: #f5f5f5;
-    font-family: 'Inter', sans-serif;
-    min-height: 100vh;
-    padding-bottom: 72px;
+
+  :root {
+    --bg-deep: #0d0d0d;
+    --bg-surface: #1a1a1a;
+    --bg-elevated: #222;
+    --border: #2a2a2a;
+    --border-focus: #3a3a3a;
+    --text-primary: #f0ede8;
+    --text-secondary: #b8b5b0;
+    --text-muted: #777;
+    --text-dim: #555;
+    --accent: #e87a3a;
+    --accent-hover: #ff8c4a;
+    --accent-muted: rgba(232, 122, 58, 0.12);
+    --accent-glow: rgba(232, 122, 58, 0.06);
+    --success: #56d364;
+    --success-bg: rgba(86, 211, 100, 0.1);
   }
 
-  /* Tab bar */
+  body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding-bottom: 72px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== PIN LOCK ===== */
+  .lock-screen {
+    position: fixed; inset: 0; z-index: 200;
+    background: var(--bg-deep);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .lock-screen.hidden { display: none; }
+  .lock-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 24px; font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .lock-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 32px; }
+  .pin-dots {
+    display: flex; gap: 16px; margin-bottom: 32px;
+  }
+  .pin-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid var(--border-focus);
+    transition: all 0.15s;
+  }
+  .pin-dot.filled {
+    background: var(--accent); border-color: var(--accent);
+  }
+  .pin-dot.wrong {
+    border-color: #eb4d3d; background: #eb4d3d;
+    animation: shake 0.4s ease;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+  .pin-pad {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px; max-width: 260px; width: 100%;
+  }
+  .pin-key {
+    height: 56px; border-radius: 8px;
+    background: var(--bg-surface); border: 1px solid var(--border);
+    color: var(--text-primary); font-size: 22px; font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer; transition: all 0.1s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pin-key:active { background: var(--bg-elevated); border-color: var(--accent); }
+  .pin-key.fn { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+  .lock-setup-msg {
+    font-size: 12px; color: var(--text-dim); margin-top: 16px;
+    text-align: center;
+  }
+
+  /* ===== TAB BAR ===== */
   .tabs {
     position: fixed; bottom: 0; left: 0; right: 0;
-    display: flex; background: #111; border-top: 1px solid #222;
-    z-index: 100;
+    display: flex; background: #111; border-top: 1px solid var(--border);
+    z-index: 100; padding-bottom: env(safe-area-inset-bottom, 0);
   }
   .tab {
-    flex: 1; padding: 12px 0 10px; text-align: center;
-    font-size: 11px; font-weight: 600; color: #666;
-    letter-spacing: 0.5px; text-transform: uppercase;
+    flex: 1; padding: 10px 0 8px; text-align: center;
+    font-size: 10px; font-weight: 600; color: var(--text-dim);
+    letter-spacing: 0.8px; text-transform: uppercase;
     cursor: pointer; transition: color 0.2s;
   }
-  .tab.active { color: #e87a3a; }
-  .tab-icon { font-size: 20px; display: block; margin-bottom: 2px; }
+  .tab.active { color: var(--accent); }
+  .tab-icon { font-size: 18px; display: block; margin-bottom: 2px; }
 
-  /* Pages */
+  /* ===== PAGES ===== */
   .page { display: none; padding: 20px 16px; }
   .page.active { display: block; }
 
-  /* Header */
   .page-header {
-    font-size: 22px; font-weight: 800; margin-bottom: 4px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 22px; font-weight: 800; letter-spacing: -0.3px;
+    margin-bottom: 4px;
   }
   .page-sub {
-    font-size: 12px; color: #666; margin-bottom: 20px;
-    letter-spacing: 0.5px;
+    font-size: 12px; color: var(--text-dim); margin-bottom: 20px;
+    letter-spacing: 0.3px;
   }
 
-  /* Logger */
+  /* ===== LOGGER ===== */
   .capture-btn {
-    width: 100%; padding: 16px; background: #e87a3a; color: #0d0d0d;
+    width: 100%; padding: 18px; background: var(--accent); color: var(--bg-deep);
     border: none; border-radius: 10px; font-size: 16px; font-weight: 700;
-    cursor: pointer; margin-bottom: 16px; transition: background 0.2s;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer; margin-bottom: 16px; transition: all 0.15s;
+    min-height: 56px;
+    position: relative; overflow: hidden;
   }
-  .capture-btn:active { background: #cc6a2e; }
-  .capture-btn:disabled { background: #444; color: #888; }
+  .capture-btn::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.08) 50%, transparent 60%);
+    opacity: 0;
+  }
+  .capture-btn:active { transform: scale(0.98); background: #d46a2a; }
+  .capture-btn:disabled { background: #333; color: #666; transform: none; }
 
   .location-bar {
-    background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px;
-    padding: 12px 14px; margin-bottom: 14px; font-size: 13px; color: #aaa;
-    display: none;
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px 14px; margin-bottom: 14px;
+    font-size: 13px; color: var(--text-secondary); display: none;
   }
-  .location-bar .addr { color: #f5f5f5; font-weight: 500; }
-  .location-bar .time { color: #666; font-size: 11px; margin-top: 4px; }
+  .location-bar .addr { color: var(--text-primary); font-weight: 600; }
+  .location-bar .time { color: var(--text-dim); font-size: 11px; margin-top: 4px; }
 
   .voice-prompt {
-    font-size: 12px; color: #e87a3a; margin-bottom: 6px; font-weight: 500;
+    font-size: 11px; color: var(--accent); margin-bottom: 8px;
+    font-weight: 500; letter-spacing: 0.3px; line-height: 1.5;
+    padding: 10px 12px; background: var(--accent-muted);
+    border-radius: 6px; border-left: 2px solid var(--accent);
   }
   .voice-area {
-    width: 100%; min-height: 120px; background: #1a1a1a;
-    border: 1px solid #2a2a2a; border-radius: 8px; color: #f5f5f5;
-    font-family: 'Inter', sans-serif; font-size: 15px; padding: 14px;
-    resize: vertical; line-height: 1.5;
+    width: 100%; min-height: 140px; background: var(--bg-surface);
+    border: 1px solid var(--border); border-radius: 8px;
+    color: var(--text-primary); font-family: 'Inter', sans-serif;
+    font-size: 16px; padding: 14px; resize: vertical; line-height: 1.6;
   }
-  .voice-area::placeholder { color: #555; }
-  .voice-area:focus { outline: none; border-color: #e87a3a; }
+  .voice-area::placeholder { color: var(--text-dim); }
+  .voice-area:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-muted); }
 
   .save-visit-btn {
-    width: 100%; padding: 14px; background: #1a1a1a; color: #e87a3a;
-    border: 1px solid #e87a3a; border-radius: 10px; font-size: 15px;
-    font-weight: 600; cursor: pointer; margin-top: 14px; transition: all 0.2s;
+    width: 100%; padding: 16px; background: var(--bg-surface);
+    color: var(--accent); border: 1px solid var(--accent);
+    border-radius: 10px; font-size: 15px; font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer; margin-top: 14px; transition: all 0.15s;
+    min-height: 52px;
   }
-  .save-visit-btn:active { background: #e87a3a; color: #0d0d0d; }
+  .save-visit-btn:active { background: var(--accent); color: var(--bg-deep); }
 
   .logger-form { display: none; }
   .logger-form.active { display: block; }
 
-  /* History */
+  /* ===== HISTORY ===== */
   .visit-card {
-    background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px;
-    padding: 14px; margin-bottom: 12px;
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px; margin-bottom: 10px;
   }
-  .visit-card .v-addr { font-size: 13px; color: #e87a3a; font-weight: 500; margin-bottom: 4px; }
-  .visit-card .v-time { font-size: 11px; color: #555; margin-bottom: 8px; }
-  .visit-card .v-notes { font-size: 14px; color: #ccc; line-height: 1.5; white-space: pre-wrap; }
+  .visit-card .v-addr {
+    font-size: 13px; color: var(--accent); font-weight: 600; margin-bottom: 3px;
+  }
+  .visit-card .v-time {
+    font-size: 11px; color: var(--text-dim); margin-bottom: 10px;
+    letter-spacing: 0.3px;
+  }
+  .visit-card .v-notes {
+    font-size: 14px; color: var(--text-secondary); line-height: 1.6;
+    white-space: pre-wrap;
+  }
   .visit-card .v-delete {
-    font-size: 11px; color: #555; cursor: pointer; margin-top: 8px;
-    display: inline-block;
+    font-size: 11px; color: var(--text-dim); cursor: pointer;
+    margin-top: 10px; display: inline-block; padding: 4px 0;
   }
 
   .empty-state {
-    text-align: center; padding: 60px 20px; color: #444;
+    text-align: center; padding: 60px 20px; color: var(--text-dim);
   }
-  .empty-state-icon { font-size: 40px; margin-bottom: 12px; }
-  .empty-state-text { font-size: 14px; }
+  .empty-state-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.5; }
+  .empty-state-text { font-size: 14px; line-height: 1.6; }
 
-  .history-stats {
-    display: flex; gap: 10px; margin-bottom: 16px;
-  }
+  .history-stats { display: flex; gap: 10px; margin-bottom: 16px; }
   .stat-box {
-    flex: 1; background: #1a1a1a; border: 1px solid #2a2a2a;
-    border-radius: 8px; padding: 12px; text-align: center;
+    flex: 1; background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 14px; text-align: center;
   }
-  .stat-num { font-size: 24px; font-weight: 800; color: #e87a3a; }
-  .stat-label { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+  .stat-num { font-size: 28px; font-weight: 800; color: var(--accent); font-family: 'Plus Jakarta Sans', sans-serif; }
+  .stat-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 4px; }
 
-  /* Playbook */
+  /* ===== PLAYBOOK ===== */
   .section-card {
-    background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px;
-    margin-bottom: 12px; overflow: hidden;
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 10px; margin-bottom: 10px; overflow: hidden;
   }
   .section-header {
-    padding: 14px; cursor: pointer; display: flex;
+    padding: 16px; cursor: pointer; display: flex;
     justify-content: space-between; align-items: center;
-    font-size: 15px; font-weight: 600;
+    font-size: 15px; font-weight: 700; letter-spacing: -0.2px;
+    min-height: 52px;
   }
-  .section-header .arrow { color: #666; transition: transform 0.2s; font-size: 12px; }
-  .section-header.open .arrow { transform: rotate(90deg); }
+  .section-header .arrow {
+    color: var(--text-dim); transition: transform 0.2s ease;
+    font-size: 11px; flex-shrink: 0; margin-left: 12px;
+  }
+  .section-header.open .arrow { transform: rotate(90deg); color: var(--accent); }
   .section-body {
-    display: none; padding: 0 14px 14px;
-    font-size: 14px; color: #bbb; line-height: 1.7;
+    display: none; padding: 0 16px 16px;
+    font-size: 14px; color: var(--text-secondary); line-height: 1.7;
   }
   .section-body.open { display: block; }
+
   .section-body h4 {
-    color: #e87a3a; font-size: 12px; text-transform: uppercase;
-    letter-spacing: 1px; margin: 12px 0 6px;
+    color: var(--accent); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 1.5px; margin: 16px 0 8px; font-weight: 700;
   }
   .section-body h4:first-child { margin-top: 0; }
+
   .section-body ul { padding-left: 18px; }
-  .section-body li { margin-bottom: 6px; }
-  .section-body .price { color: #e87a3a; font-weight: 600; }
-  .section-body .pitch-line {
-    background: #0d0d0d; border-left: 2px solid #e87a3a;
-    padding: 8px 12px; margin: 8px 0; border-radius: 0 6px 6px 0;
-    font-style: italic; color: #ddd;
+  .section-body li { margin-bottom: 8px; color: var(--text-secondary); }
+
+  .section-body .price {
+    color: var(--accent); font-weight: 700;
+    background: var(--accent-muted); padding: 2px 8px;
+    border-radius: 4px; font-size: 13px;
+  }
+
+  .pitch-line {
+    background: var(--bg-deep); border-left: 2px solid var(--accent);
+    padding: 10px 14px; margin: 10px 0; border-radius: 0 8px 8px 0;
+    font-style: italic; color: var(--text-primary);
+    font-size: 14px; line-height: 1.6;
+  }
+
+  .service-block {
+    background: var(--bg-deep); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px 14px; margin: 8px 0;
+  }
+  .service-block .svc-name {
+    font-weight: 700; color: var(--text-primary); margin-bottom: 4px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .service-block .svc-desc {
+    font-size: 13px; color: var(--text-muted); line-height: 1.5;
+  }
+
+  .tip-box {
+    background: var(--success-bg); border: 1px solid rgba(86, 211, 100, 0.2);
+    border-radius: 8px; padding: 10px 14px; margin: 10px 0;
+    font-size: 13px; color: var(--success); line-height: 1.5;
   }
 
   .export-btn {
-    width: 100%; padding: 12px; background: #1a1a1a; color: #888;
-    border: 1px solid #2a2a2a; border-radius: 8px; font-size: 13px;
-    cursor: pointer; margin-top: 8px; font-family: 'Inter', sans-serif;
+    width: 100%; padding: 14px; background: var(--bg-surface); color: var(--text-muted);
+    border: 1px solid var(--border); border-radius: 8px; font-size: 13px;
+    cursor: pointer; margin-top: 12px; font-family: 'Inter', sans-serif;
+    min-height: 48px;
   }
 </style>
 </head>
 <body>
 
+<!-- PIN LOCK SCREEN -->
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-title" id="lockTitle">Enter PIN</div>
+  <div class="lock-sub" id="lockSub">4-digit access code</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="dot0"></div>
+    <div class="pin-dot" id="dot1"></div>
+    <div class="pin-dot" id="dot2"></div>
+    <div class="pin-dot" id="dot3"></div>
+  </div>
+  <div class="pin-pad">
+    <button class="pin-key" onclick="pinInput('1')">1</button>
+    <button class="pin-key" onclick="pinInput('2')">2</button>
+    <button class="pin-key" onclick="pinInput('3')">3</button>
+    <button class="pin-key" onclick="pinInput('4')">4</button>
+    <button class="pin-key" onclick="pinInput('5')">5</button>
+    <button class="pin-key" onclick="pinInput('6')">6</button>
+    <button class="pin-key" onclick="pinInput('7')">7</button>
+    <button class="pin-key" onclick="pinInput('8')">8</button>
+    <button class="pin-key" onclick="pinInput('9')">9</button>
+    <button class="pin-key fn" onclick="pinInput('clear')">Clear</button>
+    <button class="pin-key" onclick="pinInput('0')">0</button>
+    <button class="pin-key fn" onclick="pinInput('del')">Del</button>
+  </div>
+  <div class="lock-setup-msg" id="lockMsg"></div>
+</div>
+
 <!-- LOGGER PAGE -->
 <div class="page active" id="page-logger">
   <div class="page-header">Log Visit</div>
-  <div class="page-sub">One tap, voice-type your notes, done.</div>
+  <div class="page-sub">Tap, voice-type, save. 15 seconds.</div>
 
   <button class="capture-btn" id="captureBtn">Capture Location</button>
 
@@ -165,7 +320,7 @@
     </div>
 
     <div class="voice-prompt">Include: business name, who you talked to, interest level, what they need, next step</div>
-    <textarea class="voice-area" id="notesArea" placeholder="Voice-type your notes here..."></textarea>
+    <textarea class="voice-area" id="notesArea" placeholder="Voice-type your notes here..." autocomplete="off" autocorrect="on" spellcheck="true"></textarea>
 
     <button class="save-visit-btn" id="saveVisitBtn">Save Visit</button>
   </div>
@@ -173,57 +328,83 @@
 
 <!-- PLAYBOOK PAGE -->
 <div class="page" id="page-playbook">
-  <div class="page-header">Sales Playbook</div>
-  <div class="page-sub">Quick reference before you walk in.</div>
+  <div class="page-header">Playbook</div>
+  <div class="page-sub">Quick reference. Read before you walk in.</div>
 
   <div class="section-card">
     <div class="section-header" onclick="toggleSection(this)">
-      Before You Walk In
+      What to Look For
       <span class="arrow">&#9654;</span>
     </div>
     <div class="section-body">
-      <h4>Look for these</h4>
       <ul>
-        <li>"Leave a message" or "We'll call you back" signs</li>
-        <li>Paper appointment books or wall calendars</li>
-        <li>Old/no website (check the window or truck)</li>
-        <li>Receptionist juggling phone + customers</li>
-        <li>Handwritten price lists or hours signs</li>
-        <li>"Now hiring" sign (they're stretched thin)</li>
+        <li><strong>"Leave a message"</strong> or "We'll call you back" signs</li>
+        <li><strong>Paper appointment books</strong> or wall calendars</li>
+        <li><strong>Old or no website</strong> (check the window, their trucks)</li>
+        <li><strong>Receptionist juggling</strong> phone + walk-in customers</li>
+        <li><strong>Handwritten signs</strong> (price lists, hours, specials)</li>
+        <li><strong>"Now hiring"</strong> = they're stretched thin</li>
       </ul>
-      <h4>Opening lines</h4>
-      <div class="pitch-line">"Hey, I work with trades businesses around here helping them stop losing calls when they're out on jobs. Do you guys ever have that problem?"</div>
-      <div class="pitch-line">"I noticed you don't have online booking &mdash; is that something your customers ever ask about?"</div>
-      <div class="pitch-line">"I'm building my portfolio locally and offering some steep discounts. Who handles your tech stuff?"</div>
+      <div class="tip-box">The more of these you spot, the more pain points you can reference. Notice them BEFORE you walk in.</div>
     </div>
   </div>
 
   <div class="section-card">
     <div class="section-header" onclick="toggleSection(this)">
-      Services &amp; Pricing
+      Opening Lines
       <span class="arrow">&#9654;</span>
     </div>
     <div class="section-body">
-      <h4>AI Receptionist</h4>
-      <p>Never miss a call. AI answers 24/7, takes messages, books appointments. <span class="price">$300 setup + $50/mo</span></p>
+      <h4>Lead with their problem</h4>
+      <div class="pitch-line">"Hey, I work with trades businesses around here helping them stop losing calls when they're out on jobs. Do you guys ever deal with that?"</div>
 
-      <h4>Website Rebuild</h4>
-      <p>Modern, mobile-friendly site. 5-7 pages, looks professional. <span class="price">$400&ndash;600</span></p>
+      <h4>If you noticed something specific</h4>
+      <div class="pitch-line">"I noticed you don't have online booking -- is that something customers ever ask about?"</div>
 
-      <h4>Google Presence Cleanup</h4>
-      <p>Google Business optimization, review strategy, basic local SEO. <span class="price">$150&ndash;250</span></p>
+      <h4>The portfolio angle</h4>
+      <div class="pitch-line">"I'm building my local portfolio and offering some pretty steep discounts to my first few clients. Who handles your tech stuff?"</div>
 
-      <h4>Automated Follow-ups</h4>
-      <p>Auto texts/emails to customers after service. Keeps them coming back. <span class="price">$200&ndash;400</span></p>
+      <div class="tip-box">Ask questions more than you pitch. Let them tell you what's broken.</div>
+    </div>
+  </div>
 
-      <h4>Online Booking</h4>
-      <p>Customers book online, syncs to their calendar. No more phone tag. <span class="price">$200&ndash;350</span></p>
+  <div class="section-card">
+    <div class="section-header" onclick="toggleSection(this)">
+      Services + Pricing
+      <span class="arrow">&#9654;</span>
+    </div>
+    <div class="section-body">
+      <div class="service-block">
+        <div class="svc-name">AI Receptionist <span class="price">$300 + $50/mo</span></div>
+        <div class="svc-desc">Never miss a call. AI answers 24/7, takes messages, books appointments. Works nights and weekends.</div>
+      </div>
 
-      <h4>Custom Tool</h4>
-      <p>Inventory, invoicing, dashboards &mdash; whatever they need. <span class="price">$300&ndash;800</span></p>
+      <div class="service-block">
+        <div class="svc-name">Website Rebuild <span class="price">$400 -- 600</span></div>
+        <div class="svc-desc">Modern, mobile-friendly, 5-7 pages. Looks like a real business, not a 2010 template.</div>
+      </div>
 
-      <h4>Your angle</h4>
-      <div class="pitch-line">"I'm building my local portfolio, so I'm pricing way below what agencies charge. I just need a few businesses I can point to."</div>
+      <div class="service-block">
+        <div class="svc-name">Google Presence <span class="price">$150 -- 250</span></div>
+        <div class="svc-desc">Google Business optimization, review strategy, basic local SEO. Show up when people search.</div>
+      </div>
+
+      <div class="service-block">
+        <div class="svc-name">Automated Follow-ups <span class="price">$200 -- 400</span></div>
+        <div class="svc-desc">Auto texts/emails after service calls. Keeps customers coming back without you thinking about it.</div>
+      </div>
+
+      <div class="service-block">
+        <div class="svc-name">Online Booking <span class="price">$200 -- 350</span></div>
+        <div class="svc-desc">Customers book online, syncs to calendar. No more phone tag.</div>
+      </div>
+
+      <div class="service-block">
+        <div class="svc-name">Custom Tool <span class="price">$300 -- 800</span></div>
+        <div class="svc-desc">Inventory, invoicing, dashboards, employee tools -- whatever they need, built for how they work.</div>
+      </div>
+
+      <div class="tip-box">These are portfolio-building prices. Agencies charge 3-5x more. Your angle: "I'm building locally, that's why this is so affordable."</div>
     </div>
   </div>
 
@@ -234,50 +415,48 @@
     </div>
     <div class="section-body">
       <h4>"We're too busy right now"</h4>
-      <div class="pitch-line">"That's actually the best time &mdash; you're busy enough that missed calls are costing you money. I handle all the setup, you don't have to do anything."</div>
+      <div class="pitch-line">"That's actually the best time -- you're busy enough that missed calls are costing real money. I handle all the setup. You don't have to do anything."</div>
 
       <h4>"We already have a website / system"</h4>
-      <div class="pitch-line">"Totally &mdash; when's the last time it was updated? I see a lot of businesses where the site worked fine 5 years ago but now customers expect online booking and mobile-friendly pages."</div>
+      <div class="pitch-line">"When's the last time it was updated? I see a lot of businesses where the site worked fine 5 years ago but now customers expect online booking and mobile."</div>
 
       <h4>"How do I know this works?"</h4>
-      <div class="pitch-line">"Fair question. I can set up a small pilot &mdash; if you don't see value in the first month, you don't pay for month two."</div>
+      <div class="pitch-line">"Fair question. I can set up a small pilot -- if you don't see value in the first month, you don't pay for month two. Zero risk."</div>
 
       <h4>"I need to talk to my partner"</h4>
-      <div class="pitch-line">"Absolutely. Here's my card. Can I follow up Thursday? That way I'm not bugging you, but you've got time to chat with them."</div>
+      <div class="pitch-line">"Absolutely. Here's my card. Can I follow up Thursday? That way I'm not bugging you, but you've got time to talk it over."</div>
 
       <h4>"Sounds expensive"</h4>
-      <div class="pitch-line">"Totally understand. What's your average job worth? If you're missing even 2-3 calls a week, that's way more than what this costs. But I'm also the cheapest option out there right now because I'm building locally."</div>
+      <div class="pitch-line">"What's your average job worth? If you're missing even 2 calls a week, that's way more than what this costs. And I'm the cheapest out there right now because I'm building locally."</div>
 
-      <h4>"I'm not interested"</h4>
-      <div class="pitch-line">"No worries at all. Mind if I leave my card? Things change and I'm right here in Longmont."</div>
+      <h4>"Not interested"</h4>
+      <div class="pitch-line">"No worries at all. Mind if I leave a card? Things change and I'm right here in town."</div>
     </div>
   </div>
 
   <div class="section-card">
     <div class="section-header" onclick="toggleSection(this)">
-      Closing &amp; Next Steps
+      Closing
       <span class="arrow">&#9654;</span>
     </div>
     <div class="section-body">
       <h4>If they're interested</h4>
       <ul>
-        <li>Get their name, number, and email</li>
-        <li>Ask what their biggest pain point is right now</li>
-        <li>Propose a specific next step: "I'll put together a quick mockup / plan and send it over by Friday"</li>
-        <li>Don't push for payment on the spot &mdash; schedule a follow-up</li>
+        <li>Get <strong>name, phone, email</strong></li>
+        <li>Ask: <strong>"What's your biggest headache right now?"</strong></li>
+        <li>Propose next step: <strong>"I'll put together a quick plan and send it by Friday"</strong></li>
+        <li>Don't push for payment on the spot -- schedule a follow-up</li>
       </ul>
+
       <h4>If they're lukewarm</h4>
       <ul>
         <li>Leave the card</li>
         <li>Ask if you can follow up in a week</li>
         <li>Note what they seemed most interested in</li>
       </ul>
-      <h4>Always</h4>
-      <ul>
-        <li>Be genuine. You're building something, not reading a script.</li>
-        <li>Ask questions more than you pitch.</li>
-        <li>Log the visit in the tracker before you drive away.</li>
-      </ul>
+
+      <h4>Always remember</h4>
+      <div class="tip-box">Be genuine. You're building something real, not reading a script. Ask questions more than you pitch. Log the visit before you drive away.</div>
     </div>
   </div>
 </div>
@@ -290,7 +469,7 @@
   <div class="history-stats" id="historyStats" style="display:none;">
     <div class="stat-box">
       <div class="stat-num" id="statTotal">0</div>
-      <div class="stat-label">Total Visits</div>
+      <div class="stat-label">Total</div>
     </div>
     <div class="stat-box">
       <div class="stat-num" id="statToday">0</div>
@@ -304,23 +483,136 @@
 </div>
 
 <!-- TAB BAR -->
-<div class="tabs">
+<div class="tabs" id="tabBar" style="display:none;">
   <div class="tab active" onclick="switchTab('logger')">
-    <span class="tab-icon">+</span>
-    Log
+    <span class="tab-icon">+</span>Log
   </div>
   <div class="tab" onclick="switchTab('playbook')">
-    <span class="tab-icon">&#9776;</span>
-    Playbook
+    <span class="tab-icon">&#9776;</span>Playbook
   </div>
   <div class="tab" onclick="switchTab('history')">
-    <span class="tab-icon">&#8942;</span>
-    History
+    <span class="tab-icon">&#9737;</span>History
   </div>
 </div>
 
 <script>
-// Tab switching
+// ===== PIN LOCK =====
+var pinCode = '';
+var storedPin = localStorage.getItem('hubPin');
+var isSetup = !storedPin;
+
+// 30-day device remember
+var REMEMBER_DAYS = 30;
+var rememberToken = localStorage.getItem('hubRemember');
+var remembered = false;
+if (rememberToken && storedPin) {
+  try {
+    var tokenData = JSON.parse(atob(rememberToken));
+    if (tokenData.exp > Date.now() && tokenData.h === simpleHash(storedPin)) {
+      remembered = true;
+    }
+  } catch(e) { /* invalid token, require PIN */ }
+}
+
+function simpleHash(str) {
+  var hash = 0;
+  for (var i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return hash.toString(36);
+}
+
+function setRememberToken(pin) {
+  var data = { h: simpleHash(pin), exp: Date.now() + (REMEMBER_DAYS * 86400000) };
+  localStorage.setItem('hubRemember', btoa(JSON.stringify(data)));
+}
+
+if (remembered) {
+  unlock();
+} else if (isSetup) {
+  document.getElementById('lockTitle').textContent = 'Set a PIN';
+  document.getElementById('lockSub').textContent = 'Choose a 4-digit access code';
+  document.getElementById('lockMsg').textContent = 'First time setup. You will use this to unlock.';
+}
+
+var confirmPin = '';
+var confirmStep = false;
+
+function pinInput(val) {
+  if (val === 'clear') {
+    pinCode = '';
+    updateDots();
+    return;
+  }
+  if (val === 'del') {
+    pinCode = pinCode.slice(0, -1);
+    updateDots();
+    return;
+  }
+  if (pinCode.length >= 4) return;
+  pinCode += val;
+  updateDots();
+
+  if (pinCode.length === 4) {
+    setTimeout(checkPin, 150);
+  }
+}
+
+function updateDots() {
+  for (var i = 0; i < 4; i++) {
+    var dot = document.getElementById('dot' + i);
+    dot.className = 'pin-dot' + (i < pinCode.length ? ' filled' : '');
+  }
+}
+
+function checkPin() {
+  if (isSetup) {
+    if (!confirmStep) {
+      confirmPin = pinCode;
+      confirmStep = true;
+      pinCode = '';
+      updateDots();
+      document.getElementById('lockTitle').textContent = 'Confirm PIN';
+      document.getElementById('lockSub').textContent = 'Enter the same code again';
+      document.getElementById('lockMsg').textContent = '';
+    } else {
+      if (pinCode === confirmPin) {
+        localStorage.setItem('hubPin', pinCode);
+        setRememberToken(pinCode);
+        unlock();
+      } else {
+        wrongPin();
+        confirmStep = false;
+        document.getElementById('lockTitle').textContent = 'Set a PIN';
+        document.getElementById('lockSub').textContent = 'PINs did not match. Try again.';
+      }
+    }
+  } else {
+    if (pinCode === storedPin) {
+      setRememberToken(pinCode);
+      unlock();
+    } else {
+      wrongPin();
+    }
+  }
+}
+
+function wrongPin() {
+  var dots = document.querySelectorAll('.pin-dot');
+  dots.forEach(function(d) { d.className = 'pin-dot wrong'; });
+  setTimeout(function() {
+    pinCode = '';
+    updateDots();
+  }, 500);
+}
+
+function unlock() {
+  document.getElementById('lockScreen').classList.add('hidden');
+  document.getElementById('tabBar').style.display = 'flex';
+}
+
+// ===== TABS =====
 function switchTab(name) {
   document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
   document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
@@ -329,13 +621,13 @@ function switchTab(name) {
   if (name === 'history') renderHistory();
 }
 
-// Playbook accordion
+// ===== PLAYBOOK =====
 function toggleSection(el) {
   el.classList.toggle('open');
   el.nextElementSibling.classList.toggle('open');
 }
 
-// Visit Logger
+// ===== LOGGER =====
 var currentCoords = null;
 var currentAddress = '';
 
@@ -357,7 +649,6 @@ document.getElementById('captureBtn').addEventListener('click', function() {
       now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) +
       ' at ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 
-    // Reverse geocode via OpenStreetMap
     fetch('https://nominatim.openstreetmap.org/reverse?lat=' + currentCoords.lat +
       '&lon=' + currentCoords.lng + '&format=json&addressdetails=1')
       .then(function(r) { return r.json(); })
@@ -380,12 +671,11 @@ document.getElementById('captureBtn').addEventListener('click', function() {
     btn.textContent = 'Update Location';
     btn.disabled = false;
     document.getElementById('notesArea').focus();
-
   }, function() {
-    btn.textContent = 'Location denied - tap to retry';
+    btn.textContent = 'Location denied -- tap to retry';
     btn.disabled = false;
     document.getElementById('loggerForm').classList.add('active');
-    document.getElementById('addrText').textContent = 'No location - type address in notes';
+    document.getElementById('addrText').textContent = 'No location -- type address in notes';
     document.getElementById('locationBar').style.display = 'block';
     var now = new Date();
     document.getElementById('timeText').textContent =
@@ -411,32 +701,28 @@ document.getElementById('saveVisitBtn').addEventListener('click', function() {
   visits.unshift(visit);
   localStorage.setItem('salesVisits', JSON.stringify(visits));
 
-  // Reset form
   document.getElementById('notesArea').value = '';
   document.getElementById('loggerForm').classList.remove('active');
   document.getElementById('locationBar').style.display = 'none';
-  document.getElementById('captureBtn').textContent = 'Capture Location';
   currentCoords = null;
   currentAddress = '';
 
-  // Flash confirmation
   var btn = document.getElementById('captureBtn');
   btn.textContent = 'Saved!';
   btn.style.background = '#2a7a3a';
   setTimeout(function() {
     btn.textContent = 'Capture Location';
-    btn.style.background = '#e87a3a';
+    btn.style.background = '';
   }, 1500);
 });
 
-// History rendering using safe DOM methods
+// ===== HISTORY =====
 function renderHistory() {
   var visits = JSON.parse(localStorage.getItem('salesVisits') || '[]');
   var list = document.getElementById('historyList');
   var stats = document.getElementById('historyStats');
   var exportBtn = document.getElementById('exportBtn');
 
-  // Clear existing children
   while (list.firstChild) list.removeChild(list.firstChild);
 
   if (visits.length === 0) {
@@ -446,10 +732,10 @@ function renderHistory() {
     empty.className = 'empty-state';
     var icon = document.createElement('div');
     icon.className = 'empty-state-icon';
-    icon.textContent = '\uD83D\uDCCD';
+    icon.textContent = '--';
     var text = document.createElement('div');
     text.className = 'empty-state-text';
-    text.textContent = 'No visits logged yet. Hit the Log tab to get started.';
+    text.textContent = 'No visits logged yet. Hit the Log tab after your first stop.';
     empty.appendChild(icon);
     empty.appendChild(text);
     list.appendChild(empty);
@@ -486,7 +772,14 @@ function renderHistory() {
     var del = document.createElement('span');
     del.className = 'v-delete';
     del.textContent = 'delete';
-    del.addEventListener('click', function() { deleteVisit(v.id); });
+    del.addEventListener('click', function() {
+      if (confirm('Delete this visit?')) {
+        var all = JSON.parse(localStorage.getItem('salesVisits') || '[]');
+        all = all.filter(function(x) { return x.id !== v.id; });
+        localStorage.setItem('salesVisits', JSON.stringify(all));
+        renderHistory();
+      }
+    });
 
     card.appendChild(addr);
     card.appendChild(time);
@@ -494,14 +787,6 @@ function renderHistory() {
     card.appendChild(del);
     list.appendChild(card);
   });
-}
-
-function deleteVisit(id) {
-  if (!confirm('Delete this visit?')) return;
-  var visits = JSON.parse(localStorage.getItem('salesVisits') || '[]');
-  visits = visits.filter(function(v) { return v.id !== id; });
-  localStorage.setItem('salesVisits', JSON.stringify(visits));
-  renderHistory();
 }
 
 // Export
