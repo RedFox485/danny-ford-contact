@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Danny Ford Systems — Interactive Demos</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --bg-deep: #080808;
+    --bg-surface: #131313;
+    --bg-elevated: #1a1a1a;
+    --border: #222;
+    --border-focus: #333;
+    --text-primary: #f5f3f0;
+    --text-secondary: #c5c2bc;
+    --text-muted: #888;
+    --text-dim: #555;
+    --accent: #e87a3a;
+    --accent-hover: #ff8c4a;
+    --accent-muted: rgba(232, 122, 58, 0.12);
+    --accent-glow: rgba(232, 122, 58, 0.06);
+    --success: #56d364;
+    --success-bg: rgba(86, 211, 100, 0.1);
+  }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+    padding: 16px 16px 32px;
+  }
+
+  /* Top accent bar */
+  body::before {
+    content: ''; position: fixed; top: 0; left: 0; right: 0;
+    height: 3px; z-index: 150;
+    background: linear-gradient(90deg, #d4682a, #e87a3a, #d4682a);
+  }
+
+  /* ===== BACK LINK ===== */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--accent); text-decoration: none;
+    font-size: 13px; font-weight: 600;
+    padding: 8px 0; margin-bottom: 8px;
+  }
+  .back-link:active { opacity: 0.7; }
+
+  /* ===== HEADER ===== */
+  .page-header {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 18px; font-weight: 800; letter-spacing: -0.3px;
+    margin-bottom: 2px;
+  }
+  .page-sub {
+    font-size: 11px; color: var(--text-dim); margin-bottom: 6px;
+    letter-spacing: 0.3px;
+  }
+  .page-accent {
+    width: 32px; height: 2px; margin-bottom: 20px;
+    background: linear-gradient(90deg, var(--accent), rgba(232, 122, 58, 0.1));
+  }
+
+  /* ===== DEMO CARDS ===== */
+  .demo-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .demo-card.expanded { border-color: var(--border-focus); }
+
+  .demo-card-header {
+    padding: 14px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 48px;
+  }
+  .demo-card-header:active { background: var(--bg-elevated); }
+
+  .demo-icon-wrap {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .demo-icon-wrap.orange { background: rgba(232, 122, 58, 0.12); }
+  .demo-icon-wrap.green { background: var(--success-bg); }
+  .demo-icon-wrap.blue { background: rgba(59, 130, 246, 0.1); }
+  .demo-icon-wrap.purple { background: rgba(168, 85, 247, 0.1); }
+
+  .demo-info { flex: 1; min-width: 0; }
+  .demo-name {
+    font-size: 15px; font-weight: 700; color: var(--text-primary);
+    letter-spacing: -0.2px;
+  }
+  .demo-desc {
+    font-size: 12px; color: var(--text-muted); margin-top: 2px;
+    line-height: 1.4;
+  }
+  .demo-time {
+    font-size: 10px; font-weight: 600; color: var(--accent);
+    background: var(--accent-muted);
+    padding: 2px 7px; border-radius: 4px;
+    margin-top: 4px; display: inline-block;
+  }
+
+  .demo-arrow {
+    color: var(--text-dim); font-size: 11px; flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+  .demo-card.expanded .demo-arrow { transform: rotate(90deg); color: var(--accent); }
+
+  /* ===== DEMO CONTENT AREA ===== */
+  .demo-content {
+    display: none;
+    padding: 0 16px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .demo-card.expanded .demo-content { display: block; }
+
+  /* ===== PHONE MOCKUP (shared) ===== */
+  .phone {
+    width: 280px; max-width: 100%;
+    background: #000;
+    border-radius: 28px;
+    border: 2px solid var(--border-focus);
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    margin: 16px auto 0;
+  }
+  .status-bar {
+    display: flex; justify-content: space-between;
+    padding: 10px 20px 4px;
+    font-size: 11px; font-weight: 600; color: #fff;
+  }
+
+  /* ===== DEMO 1: MISSED CALL ===== */
+  .call-screen { text-align: center; padding: 28px 16px 24px; }
+  .caller-avatar {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #d4682a);
+    margin: 0 auto 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+  }
+  .caller-name { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+  .caller-label { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; animation: pulse 1.5s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+  .call-actions { display: flex; justify-content: center; gap: 48px; }
+  .call-btn {
+    width: 52px; height: 52px; border-radius: 50%; border: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; cursor: pointer; color: #fff;
+  }
+  .call-btn:active { transform: scale(0.9); }
+  .call-btn.decline { background: #ef4444; }
+  .call-btn.accept { background: var(--success); }
+  .call-btn-label { font-size: 10px; color: var(--text-dim); margin-top: 4px; text-align: center; }
+
+  .messages-header {
+    background: rgba(255,255,255,0.05);
+    padding: 8px 14px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .messages-header .back { color: var(--accent); font-size: 16px; }
+  .messages-header .name { font-size: 14px; font-weight: 600; color: #fff; }
+
+  .messages-body {
+    padding: 14px; min-height: 300px;
+    display: flex; flex-direction: column; justify-content: flex-end; gap: 6px;
+  }
+
+  .msg {
+    max-width: 85%; padding: 8px 12px; border-radius: 16px;
+    font-size: 13px; line-height: 1.4;
+    opacity: 0; transform: translateY(8px); transition: all 0.3s ease;
+    display: none;
+  }
+  .msg.visible { opacity: 1; transform: translateY(0); display: block; }
+  .msg.incoming {
+    background: #1e3a5f; color: #e2e8f0; align-self: flex-start; border-bottom-left-radius: 4px;
+  }
+  .msg.outgoing {
+    background: var(--accent); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px;
+  }
+
+  .typing-indicator {
+    align-self: flex-start; background: #1e3a5f;
+    padding: 10px 16px; border-radius: 16px;
+    display: none; gap: 4px;
+  }
+  .typing-indicator.visible { display: flex; }
+  .typing-dot {
+    width: 6px; height: 6px; background: var(--text-dim); border-radius: 50%;
+    animation: bounce 1.4s ease-in-out infinite;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+
+  .msg-time {
+    font-size: 10px; color: var(--text-dim); text-align: center;
+    padding: 3px; display: none;
+  }
+  .msg-time.visible { display: block; }
+  .auto-label { color: var(--success); }
+
+  /* ===== DEMO 2: REVIEW REQUEST ===== */
+  .notif-banner {
+    margin: 6px 10px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    border-radius: 12px; padding: 10px 12px;
+    display: none; opacity: 0;
+    transform: translateY(-16px);
+    transition: all 0.4s ease;
+  }
+  .notif-banner.visible { display: block; opacity: 1; transform: translateY(0); }
+  .notif-top {
+    display: flex; align-items: center; gap: 6px; margin-bottom: 4px;
+  }
+  .notif-icon {
+    width: 24px; height: 24px; border-radius: 6px;
+    background: var(--success); display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+  }
+  .notif-app { font-size: 11px; font-weight: 600; color: var(--text-muted); }
+  .notif-time { font-size: 10px; color: var(--text-dim); margin-left: auto; }
+  .notif-text { font-size: 13px; color: #e2e8f0; line-height: 1.3; }
+
+  .msg.outgoing-green {
+    background: var(--success); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px;
+  }
+
+  .review-card {
+    background: #fff; border-radius: 10px; padding: 14px;
+    margin: 6px 0; display: none; opacity: 0; transition: all 0.4s ease;
+    align-self: center; width: 90%;
+  }
+  .review-card.visible { display: block; opacity: 1; }
+  .review-card-header {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+  }
+  .g-logo {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: #fff; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 18px; color: #4285f4;
+  }
+  .g-text { font-size: 12px; color: #333; font-weight: 600; }
+  .g-sub { font-size: 10px; color: #888; }
+  .stars { display: flex; gap: 4px; justify-content: center; margin: 10px 0; }
+  .star {
+    width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+    font-size: 24px; cursor: pointer; transition: transform 0.2s;
+    filter: grayscale(1); opacity: 0.4;
+  }
+  .star.lit { filter: grayscale(0); opacity: 1; transform: scale(1.1); }
+  .review-prompt { text-align: center; font-size: 12px; color: #666; margin-top: 6px; }
+
+  /* ===== DEMO 3: INTEGRATION HUB ===== */
+  .dashboard {
+    width: 100%; max-width: 340px;
+    background: var(--bg-surface);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin: 16px auto 0;
+  }
+  .dash-header {
+    padding: 12px 16px;
+    background: var(--accent-muted);
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .dash-title { font-size: 13px; font-weight: 700; }
+  .dash-status { font-size: 10px; color: var(--success); font-weight: 600; display: flex; align-items: center; gap: 4px; }
+  .dash-status .dot { width: 5px; height: 5px; background: var(--success); border-radius: 50%; animation: blink 2s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .hub-area {
+    padding: 20px 16px;
+    position: relative;
+    min-height: 260px;
+  }
+  .center-hub {
+    width: 60px; height: 60px;
+    background: linear-gradient(135deg, var(--accent), #d4682a);
+    border-radius: 50%;
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 800; text-align: center;
+    line-height: 1.2; z-index: 2;
+    box-shadow: 0 0 24px rgba(232, 122, 58, 0.3);
+  }
+  .spoke-node {
+    position: absolute;
+    width: 48px; height: 48px;
+    border-radius: 10px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-size: 8px; font-weight: 600;
+    opacity: 0; transition: all 0.5s ease;
+    z-index: 2;
+  }
+  .spoke-node.visible { opacity: 1; }
+  .spoke-node .node-icon { font-size: 18px; margin-bottom: 1px; }
+
+  .spoke-node:nth-child(2) { top: 8px; left: 16px; background: var(--success-bg); border: 1px solid rgba(86,211,100,0.2); color: var(--success); }
+  .spoke-node:nth-child(3) { top: 8px; right: 16px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); color: #60a5fa; }
+  .spoke-node:nth-child(4) { bottom: 8px; left: 16px; background: var(--accent-muted); border: 1px solid rgba(232,122,58,0.2); color: var(--accent); }
+  .spoke-node:nth-child(5) { bottom: 8px; right: 16px; background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.2); color: #a855f7; }
+  .spoke-node:nth-child(6) { top: 50%; left: -2px; transform: translateY(-50%); background: rgba(236,72,153,0.1); border: 1px solid rgba(236,72,153,0.2); color: #ec4899; }
+  .spoke-node:nth-child(7) { top: 50%; right: -2px; transform: translateY(-50%); background: rgba(14,165,233,0.1); border: 1px solid rgba(14,165,233,0.2); color: #0ea5e9; }
+
+  .connections {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+  }
+  .conn-line {
+    stroke-dasharray: 200; stroke-dashoffset: 200;
+    transition: stroke-dashoffset 0.8s ease;
+  }
+  .conn-line.active { stroke-dashoffset: 0; }
+
+  .feed {
+    border-top: 1px solid var(--border);
+    padding: 12px 16px; max-height: 180px; overflow-y: auto;
+  }
+  .feed-header {
+    font-size: 10px; font-weight: 700; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+  }
+  .feed-item {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 4px 0; opacity: 0; transform: translateX(-8px);
+    transition: all 0.3s ease; font-size: 11px;
+  }
+  .feed-item.visible { opacity: 1; transform: translateX(0); }
+  .feed-dot {
+    width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 4px;
+  }
+  .feed-dot.green { background: var(--success); }
+  .feed-dot.blue { background: #3b82f6; }
+  .feed-dot.orange { background: var(--accent); }
+  .feed-dot.purple { background: #a855f7; }
+  .feed-text { color: var(--text-muted); line-height: 1.4; }
+  .feed-text b { color: var(--text-secondary); font-weight: 600; }
+  .feed-time { font-size: 9px; color: var(--text-dim); margin-left: auto; flex-shrink: 0; }
+
+  /* ===== DEMO 4: BOOKING FLOW ===== */
+  .phone-light { background: #fff; }
+  .phone-light .status-bar { color: #333; background: #f8fafc; }
+
+  .biz-header {
+    background: linear-gradient(135deg, #1a1a1a, var(--bg-deep));
+    padding: 16px 16px 14px; text-align: center;
+  }
+  .biz-name { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+  .biz-sub { font-size: 11px; color: var(--text-muted); }
+
+  .booking-body { padding: 14px; background: #fff; }
+
+  .step-label {
+    font-size: 10px; font-weight: 700; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+  }
+  .services-list { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+  .service-option {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 10px; border-radius: 7px;
+    border: 1.5px solid #e2e8f0; cursor: pointer; transition: all 0.2s;
+  }
+  .service-option:active { transform: scale(0.98); }
+  .service-option.selected { border-color: var(--accent); background: var(--accent-muted); }
+  .service-option .svc-name { font-size: 12px; font-weight: 600; color: #1e293b; }
+  .service-option .svc-details { font-size: 10px; color: #94a3b8; }
+  .service-option .svc-price { font-size: 13px; font-weight: 700; color: var(--accent); }
+  .svc-left { display: flex; align-items: center; gap: 7px; }
+  .radio {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid #cbd5e1; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .service-option.selected .radio { border-color: var(--accent); }
+  .radio-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: none; }
+  .service-option.selected .radio-dot { display: block; }
+
+  .time-section { display: none; margin-bottom: 14px; }
+  .time-section.visible { display: block; }
+  .date-label { font-size: 12px; font-weight: 600; color: #1e293b; margin-bottom: 6px; }
+  .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+  .time-slot {
+    padding: 7px; text-align: center; border-radius: 5px;
+    border: 1.5px solid #e2e8f0; font-size: 11px; font-weight: 600;
+    color: #475569; cursor: pointer; transition: all 0.2s;
+  }
+  .time-slot:active { transform: scale(0.95); }
+  .time-slot.selected { border-color: var(--accent); background: var(--accent); color: #fff; }
+  .time-slot.unavail { color: #cbd5e1; border-color: #f1f5f9; cursor: default; text-decoration: line-through; }
+
+  .confirm-btn {
+    display: none; width: 100%; padding: 12px;
+    background: var(--accent); color: #fff; border: none; border-radius: 8px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    margin-top: 6px; transition: all 0.2s;
+  }
+  .confirm-btn.visible { display: block; }
+  .confirm-btn:active { transform: scale(0.98); background: #d4682a; }
+
+  .confirm-screen {
+    display: none; text-align: center; padding: 32px 16px; background: #fff;
+  }
+  .confirm-screen.visible { display: block; }
+  .confirm-check {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: var(--success); margin: 0 auto 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; color: #fff;
+    animation: popIn 0.4s ease;
+  }
+  @keyframes popIn { 0%{transform:scale(0)} 70%{transform:scale(1.1)} 100%{transform:scale(1)} }
+  .confirm-title { font-size: 16px; font-weight: 800; color: #1e293b; margin-bottom: 4px; }
+  .confirm-detail { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
+  .confirm-actions {
+    display: flex; flex-direction: column; gap: 5px;
+    font-size: 11px; color: #94a3b8;
+    background: #f8fafc; padding: 10px; border-radius: 8px;
+    text-align: left;
+  }
+  .confirm-actions b { color: #1e293b; }
+
+  /* ===== SHARED CONTROLS ===== */
+  .demo-hint {
+    color: var(--text-dim); font-size: 11px;
+    text-align: center; margin-top: 12px;
+  }
+
+  .demo-start-btn {
+    display: block; margin: 16px auto 0;
+    background: var(--accent); color: var(--bg-deep); border: none;
+    padding: 12px 28px; border-radius: 8px;
+    font-size: 14px; font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .demo-start-btn:active { transform: scale(0.95); background: #d4682a; }
+
+  .demo-reset-btn {
+    background: none; border: 1px solid var(--border); color: var(--text-dim);
+    font-size: 11px; padding: 5px 14px; border-radius: 6px; cursor: pointer;
+    margin-top: 10px; display: none;
+    font-family: 'Inter', sans-serif;
+  }
+  .demo-reset-btn:active { border-color: var(--accent); color: var(--accent); }
+
+  .demo-controls { text-align: center; }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    text-align: center; margin-top: 32px; padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .footer-text {
+    font-size: 11px; color: var(--text-dim); margin-bottom: 12px;
+  }
+  .footer-link {
+    display: inline-block;
+    font-size: 13px; font-weight: 600; color: var(--accent);
+    text-decoration: none; padding: 10px 24px;
+    border: 1px solid var(--accent); border-radius: 8px;
+    transition: all 0.15s;
+  }
+  .footer-link:active { background: var(--accent); color: var(--bg-deep); }
+</style>
+</head>
+<body>
+
+<a href="hub.html" class="back-link">&#8249; Back to Hub</a>
+
+<div class="page-header">Interactive Demos</div>
+<div class="page-sub">See the systems in action. Tap a demo to try it.</div>
+<div class="page-accent"></div>
+
+<!-- ============================================================ -->
+<!-- DEMO 1: MISSED CALL TEXT-BACK -->
+<!-- ============================================================ -->
+<div class="demo-card" id="demo1">
+  <div class="demo-card-header" onclick="toggleDemo('demo1')">
+    <div class="demo-icon-wrap orange">📱</div>
+    <div class="demo-info">
+      <div class="demo-name">Missed Call Text-Back</div>
+      <div class="demo-desc">Watch what happens when a customer calls and nobody picks up.</div>
+      <div class="demo-time">15 sec demo</div>
+    </div>
+    <span class="demo-arrow">&#9654;</span>
+  </div>
+  <div class="demo-content">
+    <div class="phone">
+      <div class="status-bar"><span>3:15 PM</span><span>5G</span></div>
+      <div class="call-screen" id="d1-callScreen">
+        <div class="caller-avatar">👤</div>
+        <div class="caller-name">Sarah Mitchell</div>
+        <div class="caller-label">Incoming Call...</div>
+        <div class="call-actions">
+          <div>
+            <button class="call-btn decline" id="d1-declineBtn">✕</button>
+            <div class="call-btn-label">Decline</div>
+          </div>
+          <div>
+            <button class="call-btn accept">✓</button>
+            <div class="call-btn-label">Accept</div>
+          </div>
+        </div>
+      </div>
+      <div id="d1-messagesScreen" style="display:none;">
+        <div class="messages-header">
+          <span class="back">‹</span>
+          <span class="name">Sarah Mitchell</span>
+        </div>
+        <div class="messages-body">
+          <div class="msg-time" id="d1-missedLabel">Missed call · 3:15 PM</div>
+          <div class="typing-indicator" id="d1-typing">
+            <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+          </div>
+          <div class="msg outgoing" id="d1-msg1">Hi Sarah! Sorry we missed your call. We're currently with a customer but want to make sure we get back to you.</div>
+          <div class="msg outgoing" id="d1-msg2">You can book an appointment directly here: book.yourbusiness.com</div>
+          <div class="msg outgoing" id="d1-msg3">Or reply to this text and we'll call you back within 10 minutes!</div>
+          <div class="msg incoming" id="d1-msg4">Oh awesome! I need a haircut for Saturday, let me check that link</div>
+          <div class="msg-time auto-label" id="d1-autoLabel">Sent automatically — 4 seconds after missed call</div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-controls">
+      <div class="demo-hint" id="d1-hint">Tap Decline to simulate a missed call</div>
+      <button class="demo-reset-btn" id="d1-resetBtn" onclick="resetDemo1()">Reset Demo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DEMO 2: AUTOMATED REVIEW REQUESTS -->
+<!-- ============================================================ -->
+<div class="demo-card" id="demo2">
+  <div class="demo-card-header" onclick="toggleDemo('demo2')">
+    <div class="demo-icon-wrap green">⭐</div>
+    <div class="demo-info">
+      <div class="demo-name">Automated Review Requests</div>
+      <div class="demo-desc">After a service is done, watch a 5-star review roll in automatically.</div>
+      <div class="demo-time">20 sec demo</div>
+    </div>
+    <span class="demo-arrow">&#9654;</span>
+  </div>
+  <div class="demo-content">
+    <div class="phone">
+      <div class="status-bar"><span>2:45 PM</span><span>5G</span></div>
+      <div class="notif-banner" id="d2-notif">
+        <div class="notif-top">
+          <div class="notif-icon">💬</div>
+          <span class="notif-app">Messages</span>
+          <span class="notif-time">now</span>
+        </div>
+        <div class="notif-text">New message from Premier Plumbing</div>
+      </div>
+      <div class="messages-body" style="min-height:340px;">
+        <div class="msg-time" id="d2-timeLabel">Today, 2:45 PM</div>
+        <div class="msg outgoing-green" id="d2-msg1">Hi Marcus! Thanks for choosing Premier Plumbing today. We hope everything went great with your faucet repair!</div>
+        <div class="msg outgoing-green" id="d2-msg2">Would you mind leaving us a quick review? It really helps small businesses like ours.</div>
+        <div class="msg outgoing-green" id="d2-msg3">Just tap here: ★ Leave a Google Review</div>
+        <div class="typing-indicator" id="d2-typing">
+          <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+        </div>
+        <div class="msg incoming" id="d2-msg4">Sure thing! You guys did great work</div>
+        <div class="review-card" id="d2-reviewCard">
+          <div class="review-card-header">
+            <div class="g-logo">G</div>
+            <div><div class="g-text">Premier Plumbing</div><div class="g-sub">Rate your experience</div></div>
+          </div>
+          <div class="stars" id="d2-stars">
+            <div class="star" data-star="1">★</div>
+            <div class="star" data-star="2">★</div>
+            <div class="star" data-star="3">★</div>
+            <div class="star" data-star="4">★</div>
+            <div class="star" data-star="5">★</div>
+          </div>
+          <div class="review-prompt" id="d2-reviewPrompt">Tap a star to rate</div>
+        </div>
+        <div class="msg-time auto-label" id="d2-autoLabel">Sent automatically when job marked complete</div>
+      </div>
+    </div>
+    <div class="demo-controls">
+      <button class="demo-start-btn" id="d2-startBtn" onclick="runDemo2()">Start Demo</button>
+      <div class="demo-hint" id="d2-hint">Simulates what the customer sees on their phone</div>
+      <button class="demo-reset-btn" id="d2-resetBtn" onclick="resetDemo2()">Reset Demo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DEMO 3: SYSTEM INTEGRATION HUB -->
+<!-- ============================================================ -->
+<div class="demo-card" id="demo3">
+  <div class="demo-card-header" onclick="toggleDemo('demo3')">
+    <div class="demo-icon-wrap blue">🔗</div>
+    <div class="demo-info">
+      <div class="demo-name">System Integration Hub</div>
+      <div class="demo-desc">See how calendar, CRM, email, and payments all connect automatically.</div>
+      <div class="demo-time">30 sec demo</div>
+    </div>
+    <span class="demo-arrow">&#9654;</span>
+  </div>
+  <div class="demo-content">
+    <div class="dashboard">
+      <div class="dash-header">
+        <span class="dash-title">Your Business Hub</span>
+        <span class="dash-status"><span class="dot"></span> All Systems Connected</span>
+      </div>
+      <div class="hub-area">
+        <svg class="connections" viewBox="0 0 340 260">
+          <line class="conn-line" id="d3-line1" x1="170" y1="130" x2="60" y2="44" stroke="#56d364" stroke-width="1.5" opacity="0.4"/>
+          <line class="conn-line" id="d3-line2" x1="170" y1="130" x2="280" y2="44" stroke="#3b82f6" stroke-width="1.5" opacity="0.4"/>
+          <line class="conn-line" id="d3-line3" x1="170" y1="130" x2="60" y2="216" stroke="#e87a3a" stroke-width="1.5" opacity="0.4"/>
+          <line class="conn-line" id="d3-line4" x1="170" y1="130" x2="280" y2="216" stroke="#a855f7" stroke-width="1.5" opacity="0.4"/>
+          <line class="conn-line" id="d3-line5" x1="170" y1="130" x2="24" y2="130" stroke="#ec4899" stroke-width="1.5" opacity="0.4"/>
+          <line class="conn-line" id="d3-line6" x1="170" y1="130" x2="316" y2="130" stroke="#0ea5e9" stroke-width="1.5" opacity="0.4"/>
+        </svg>
+        <div class="center-hub">YOUR<br>SYSTEM</div>
+        <div class="spoke-node" id="d3-node1"><div class="node-icon">📅</div>Calendar</div>
+        <div class="spoke-node" id="d3-node2"><div class="node-icon">👥</div>CRM</div>
+        <div class="spoke-node" id="d3-node3"><div class="node-icon">📧</div>Email</div>
+        <div class="spoke-node" id="d3-node4"><div class="node-icon">💳</div>Payments</div>
+        <div class="spoke-node" id="d3-node5"><div class="node-icon">📱</div>Texts</div>
+        <div class="spoke-node" id="d3-node6"><div class="node-icon">📊</div>Reports</div>
+      </div>
+      <div class="feed">
+        <div class="feed-header">Live Activity</div>
+        <div class="feed-item" id="d3-feed1"><div class="feed-dot green"></div><div class="feed-text"><b>New booking</b> synced from Calendar to CRM</div><div class="feed-time">just now</div></div>
+        <div class="feed-item" id="d3-feed2"><div class="feed-dot blue"></div><div class="feed-text"><b>Confirmation email</b> sent automatically</div><div class="feed-time">2s ago</div></div>
+        <div class="feed-item" id="d3-feed3"><div class="feed-dot orange"></div><div class="feed-text"><b>Invoice created</b> in QuickBooks</div><div class="feed-time">4s ago</div></div>
+        <div class="feed-item" id="d3-feed4"><div class="feed-dot purple"></div><div class="feed-text"><b>SMS reminder</b> scheduled for tomorrow</div><div class="feed-time">5s ago</div></div>
+        <div class="feed-item" id="d3-feed5"><div class="feed-dot green"></div><div class="feed-text"><b>Daily report</b> generated and emailed</div><div class="feed-time">6s ago</div></div>
+      </div>
+    </div>
+    <div class="demo-controls">
+      <button class="demo-start-btn" id="d3-startBtn" onclick="runDemo3()">Connect Systems</button>
+      <div class="demo-hint" id="d3-hint">Watch everything connect in real time</div>
+      <button class="demo-reset-btn" id="d3-resetBtn" onclick="resetDemo3()">Reset Demo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DEMO 4: SMART BOOKING PAGE -->
+<!-- ============================================================ -->
+<div class="demo-card" id="demo4">
+  <div class="demo-card-header" onclick="toggleDemo('demo4')">
+    <div class="demo-icon-wrap purple">📅</div>
+    <div class="demo-info">
+      <div class="demo-name">Smart Booking Page</div>
+      <div class="demo-desc">Customer picks a time online, your calendar updates instantly. No phone tag.</div>
+      <div class="demo-time">20 sec demo</div>
+    </div>
+    <span class="demo-arrow">&#9654;</span>
+  </div>
+  <div class="demo-content">
+    <div class="phone phone-light">
+      <div class="status-bar"><span>11:30 AM</span><span>5G</span></div>
+      <div id="d4-bookingPage">
+        <div class="biz-header">
+          <div class="biz-name">Premier Plumbing Co.</div>
+          <div class="biz-sub">Book an appointment online</div>
+        </div>
+        <div class="booking-body">
+          <div class="step-label">1. Choose a Service</div>
+          <div class="services-list" id="d4-servicesList">
+            <div class="service-option" data-svc="drain">
+              <div class="svc-left"><div class="radio"><div class="radio-dot"></div></div><div><div class="svc-name">Drain Cleaning</div><div class="svc-details">45 min</div></div></div>
+              <div class="svc-price">$149</div>
+            </div>
+            <div class="service-option" data-svc="faucet">
+              <div class="svc-left"><div class="radio"><div class="radio-dot"></div></div><div><div class="svc-name">Faucet Repair</div><div class="svc-details">30 min</div></div></div>
+              <div class="svc-price">$99</div>
+            </div>
+            <div class="service-option" data-svc="inspect">
+              <div class="svc-left"><div class="radio"><div class="radio-dot"></div></div><div><div class="svc-name">Home Inspection</div><div class="svc-details">60 min</div></div></div>
+              <div class="svc-price">$199</div>
+            </div>
+          </div>
+          <div class="time-section" id="d4-timeSection">
+            <div class="step-label">2. Pick a Time</div>
+            <div class="date-label">Saturday, March 8</div>
+            <div class="time-grid" id="d4-timeGrid">
+              <div class="time-slot" data-time="9:00 AM">9:00 AM</div>
+              <div class="time-slot unavail">10:00 AM</div>
+              <div class="time-slot" data-time="11:00 AM">11:00 AM</div>
+              <div class="time-slot" data-time="1:00 PM">1:00 PM</div>
+              <div class="time-slot unavail">2:00 PM</div>
+              <div class="time-slot" data-time="3:00 PM">3:00 PM</div>
+            </div>
+          </div>
+          <button class="confirm-btn" id="d4-confirmBtn">Confirm Booking</button>
+        </div>
+      </div>
+      <div class="confirm-screen" id="d4-confirmScreen">
+        <div class="confirm-check">&#10003;</div>
+        <div class="confirm-title">Booked!</div>
+        <div class="confirm-detail" id="d4-confirmDetail"></div>
+        <div class="confirm-actions">
+          <div><b>Automatically triggered:</b></div>
+          <div>&#10003; Confirmation email sent to customer</div>
+          <div>&#10003; Added to your Google Calendar</div>
+          <div>&#10003; CRM updated with job details</div>
+          <div>&#10003; Reminder text scheduled for Friday 6 PM</div>
+          <div>&#10003; You got a notification on your phone</div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-controls">
+      <div class="demo-hint" id="d4-hint">Tap a service to start booking</div>
+      <button class="demo-reset-btn" id="d4-resetBtn" onclick="resetDemo4()">Reset Demo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div class="footer">
+  <div class="footer-text">Danny Ford Systems · Longmont, CO</div>
+  <a href="hub.html" class="footer-link">Back to Sales Hub</a>
+</div>
+
+<script>
+// ===== DEMO CARD TOGGLE =====
+function toggleDemo(id) {
+  var card = document.getElementById(id);
+  var wasExpanded = card.classList.contains('expanded');
+  var allCards = document.querySelectorAll('.demo-card');
+  for (var i = 0; i < allCards.length; i++) allCards[i].classList.remove('expanded');
+  if (!wasExpanded) card.classList.add('expanded');
+}
+
+// ===== DEMO 1: MISSED CALL =====
+document.getElementById('d1-declineBtn').addEventListener('click', function(e) {
+  e.stopPropagation();
+  document.getElementById('d1-callScreen').style.display = 'none';
+  document.getElementById('d1-messagesScreen').style.display = 'block';
+  document.getElementById('d1-hint').textContent = 'Watch the automated response...';
+
+  setTimeout(function() { document.getElementById('d1-missedLabel').classList.add('visible'); }, 500);
+  setTimeout(function() { document.getElementById('d1-typing').classList.add('visible'); }, 1200);
+  setTimeout(function() {
+    document.getElementById('d1-typing').classList.remove('visible');
+    document.getElementById('d1-msg1').classList.add('visible');
+  }, 2800);
+  setTimeout(function() { document.getElementById('d1-msg2').classList.add('visible'); }, 3800);
+  setTimeout(function() { document.getElementById('d1-msg3').classList.add('visible'); }, 4800);
+  setTimeout(function() { document.getElementById('d1-autoLabel').classList.add('visible'); }, 5500);
+  setTimeout(function() {
+    document.getElementById('d1-msg4').classList.add('visible');
+    document.getElementById('d1-hint').textContent = 'Lead saved. Without this, Sarah calls your competitor.';
+    document.getElementById('d1-resetBtn').style.display = 'inline-block';
+  }, 7500);
+});
+
+function resetDemo1() {
+  var els = ['d1-msg1','d1-msg2','d1-msg3','d1-msg4','d1-missedLabel','d1-autoLabel'];
+  for (var i = 0; i < els.length; i++) document.getElementById(els[i]).classList.remove('visible');
+  document.getElementById('d1-typing').classList.remove('visible');
+  document.getElementById('d1-messagesScreen').style.display = 'none';
+  document.getElementById('d1-callScreen').style.display = 'block';
+  document.getElementById('d1-hint').textContent = 'Tap Decline to simulate a missed call';
+  document.getElementById('d1-resetBtn').style.display = 'none';
+}
+
+// ===== DEMO 2: REVIEW REQUEST =====
+var d2Stars = document.querySelectorAll('#d2-stars .star');
+for (var i = 0; i < d2Stars.length; i++) {
+  d2Stars[i].addEventListener('click', function() {
+    var rating = parseInt(this.getAttribute('data-star'));
+    for (var j = 0; j < d2Stars.length; j++) {
+      if (j < rating) d2Stars[j].classList.add('lit');
+      else d2Stars[j].classList.remove('lit');
+    }
+    document.getElementById('d2-reviewPrompt').textContent = rating + ' stars \u2014 Thanks Marcus!';
+    document.getElementById('d2-hint').textContent = 'New 5-star review. Zero effort from the business owner.';
+    document.getElementById('d2-resetBtn').style.display = 'inline-block';
+  });
+}
+
+function runDemo2() {
+  document.getElementById('d2-startBtn').style.display = 'none';
+  setTimeout(function() { document.getElementById('d2-notif').classList.add('visible'); }, 300);
+  setTimeout(function() {
+    document.getElementById('d2-notif').classList.remove('visible');
+    document.getElementById('d2-timeLabel').classList.add('visible');
+  }, 2000);
+  setTimeout(function() { document.getElementById('d2-msg1').classList.add('visible'); }, 2500);
+  setTimeout(function() { document.getElementById('d2-msg2').classList.add('visible'); }, 3500);
+  setTimeout(function() { document.getElementById('d2-msg3').classList.add('visible'); }, 4500);
+  setTimeout(function() { document.getElementById('d2-autoLabel').classList.add('visible'); }, 5200);
+  setTimeout(function() { document.getElementById('d2-typing').classList.add('visible'); }, 6500);
+  setTimeout(function() {
+    document.getElementById('d2-typing').classList.remove('visible');
+    document.getElementById('d2-msg4').classList.add('visible');
+  }, 8000);
+  setTimeout(function() {
+    document.getElementById('d2-reviewCard').classList.add('visible');
+    document.getElementById('d2-hint').textContent = 'Tap 5 stars to complete the review';
+  }, 9000);
+}
+
+function resetDemo2() {
+  var els = ['d2-msg1','d2-msg2','d2-msg3','d2-msg4','d2-timeLabel','d2-autoLabel','d2-reviewCard'];
+  for (var i = 0; i < els.length; i++) document.getElementById(els[i]).classList.remove('visible');
+  document.getElementById('d2-typing').classList.remove('visible');
+  document.getElementById('d2-notif').classList.remove('visible');
+  for (var j = 0; j < d2Stars.length; j++) d2Stars[j].classList.remove('lit');
+  document.getElementById('d2-reviewPrompt').textContent = 'Tap a star to rate';
+  document.getElementById('d2-hint').textContent = 'Simulates what the customer sees on their phone';
+  document.getElementById('d2-startBtn').style.display = 'block';
+  document.getElementById('d2-resetBtn').style.display = 'none';
+}
+
+// ===== DEMO 3: INTEGRATION HUB =====
+function runDemo3() {
+  document.getElementById('d3-startBtn').style.display = 'none';
+  var nodes = ['d3-node1','d3-node2','d3-node3','d3-node4','d3-node5','d3-node6'];
+  var lines = ['d3-line1','d3-line2','d3-line3','d3-line4','d3-line5','d3-line6'];
+  for (var i = 0; i < nodes.length; i++) {
+    (function(idx) {
+      setTimeout(function() {
+        document.getElementById(nodes[idx]).classList.add('visible');
+        document.getElementById(lines[idx]).classList.add('active');
+      }, 400 * (idx + 1));
+    })(i);
+  }
+  var feeds = ['d3-feed1','d3-feed2','d3-feed3','d3-feed4','d3-feed5'];
+  for (var j = 0; j < feeds.length; j++) {
+    (function(idx) {
+      setTimeout(function() {
+        document.getElementById(feeds[idx]).classList.add('visible');
+      }, 3000 + (800 * idx));
+    })(j);
+  }
+  setTimeout(function() {
+    document.getElementById('d3-hint').textContent = 'One booking triggers 5 automated actions. Zero manual work.';
+    document.getElementById('d3-resetBtn').style.display = 'inline-block';
+  }, 7000);
+}
+
+function resetDemo3() {
+  var nodes = ['d3-node1','d3-node2','d3-node3','d3-node4','d3-node5','d3-node6'];
+  var lines = ['d3-line1','d3-line2','d3-line3','d3-line4','d3-line5','d3-line6'];
+  var feeds = ['d3-feed1','d3-feed2','d3-feed3','d3-feed4','d3-feed5'];
+  for (var i = 0; i < nodes.length; i++) document.getElementById(nodes[i]).classList.remove('visible');
+  for (var i = 0; i < lines.length; i++) document.getElementById(lines[i]).classList.remove('active');
+  for (var i = 0; i < feeds.length; i++) document.getElementById(feeds[i]).classList.remove('visible');
+  document.getElementById('d3-hint').textContent = 'Watch everything connect in real time';
+  document.getElementById('d3-startBtn').style.display = 'block';
+  document.getElementById('d3-resetBtn').style.display = 'none';
+}
+
+// ===== DEMO 4: BOOKING FLOW =====
+var d4SelectedService = '';
+var d4SelectedTime = '';
+
+var d4ServiceOptions = document.querySelectorAll('#d4-servicesList .service-option');
+for (var i = 0; i < d4ServiceOptions.length; i++) {
+  d4ServiceOptions[i].addEventListener('click', function() {
+    for (var j = 0; j < d4ServiceOptions.length; j++) d4ServiceOptions[j].classList.remove('selected');
+    this.classList.add('selected');
+    d4SelectedService = this.querySelector('.svc-name').textContent;
+    document.getElementById('d4-timeSection').classList.add('visible');
+    document.getElementById('d4-hint').textContent = 'Now pick a time slot';
+  });
+}
+
+var d4TimeSlots = document.querySelectorAll('#d4-timeGrid .time-slot:not(.unavail)');
+for (var i = 0; i < d4TimeSlots.length; i++) {
+  d4TimeSlots[i].addEventListener('click', function() {
+    for (var j = 0; j < d4TimeSlots.length; j++) d4TimeSlots[j].classList.remove('selected');
+    this.classList.add('selected');
+    d4SelectedTime = this.getAttribute('data-time');
+    document.getElementById('d4-confirmBtn').classList.add('visible');
+    document.getElementById('d4-hint').textContent = 'Tap Confirm to complete the booking';
+  });
+}
+
+document.getElementById('d4-confirmBtn').addEventListener('click', function() {
+  document.getElementById('d4-bookingPage').style.display = 'none';
+  document.getElementById('d4-confirmDetail').textContent = d4SelectedService + '\nSaturday, March 8 at ' + d4SelectedTime;
+  document.getElementById('d4-confirmScreen').classList.add('visible');
+  document.getElementById('d4-hint').textContent = '5 automated actions from one booking. Zero manual work.';
+  document.getElementById('d4-resetBtn').style.display = 'inline-block';
+});
+
+function resetDemo4() {
+  for (var j = 0; j < d4ServiceOptions.length; j++) d4ServiceOptions[j].classList.remove('selected');
+  for (var j = 0; j < d4TimeSlots.length; j++) d4TimeSlots[j].classList.remove('selected');
+  document.getElementById('d4-timeSection').classList.remove('visible');
+  document.getElementById('d4-confirmBtn').classList.remove('visible');
+  document.getElementById('d4-confirmScreen').classList.remove('visible');
+  document.getElementById('d4-bookingPage').style.display = 'block';
+  d4SelectedService = '';
+  d4SelectedTime = '';
+  document.getElementById('d4-hint').textContent = 'Tap a service to start booking';
+  document.getElementById('d4-resetBtn').style.display = 'none';
+}
+</script>
+</body>
+</html>
